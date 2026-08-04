@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Идея или объект ИС?</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap');
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #F2EFFF;
+      --surface: #FFFFFF;
+      --navy: #1C1A3A;
+      --navy2: #2D2A52;
+      --purple: #6C5CE7;
+      --purple-lt: #EDE9FF;
+      --purple-mid: #C4B8F8;
+      --teal: #00C9A7;
+      --teal-lt: #D6FBF4;
+      --amber: #FFB347;
+      --amber-lt: #FFF3DC;
+      --red: #FF5C6A;
+      --green: #00C9A7;
+      --orange: #FF6611;
+      --orange-lt: #FFF0E8;
+      --muted: #8B87A8;
+      --border: #E4DEFF;
+      --font: 'Onest', sans-serif;
+      --radius: 16px;
+      --shadow: 0 4px 24px rgba(108, 92, 231, .10);
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 32px 16px 48px;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 900px;
+    }
+
+    /* ── HEADER ─────────────────────────────── */
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--navy);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .header-badge span {
+      font-size: 14px;
+    }
+
+    .header h1 {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+
+    .header h1 em {
+      font-style: normal;
+      color: var(--purple);
+      position: relative;
+    }
+
+    .header h1 em::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--orange);
+      border-radius: 2px;
+    }
+
+    .header p {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── COLUMNS ─────────────────────────────── */
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .col {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+      padding: 20px;
+      min-height: 220px;
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+      position: relative;
+    }
+
+    .col.drag-over {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 4px rgba(108, 92, 231, .12), var(--shadow);
+      transform: scale(1.01);
+    }
+
+    .col.col-idea {
+      border-top: 4px solid var(--amber);
+    }
+
+    .col.col-rid {
+      border-top: 4px solid var(--teal);
+    }
+
+    .col.col-idea.drag-over {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 4px rgba(255, 179, 71, .15), var(--shadow);
+    }
+
+    .col.col-rid.drag-over {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(0, 201, 167, .15), var(--shadow);
+    }
+
+    .col-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .col-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .col-idea .col-icon {
+      background: var(--amber-lt);
+    }
+
+    .col-rid .col-icon {
+      background: var(--teal-lt);
+    }
+
+    .col-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+    }
+
+    .col-idea .col-title {
+      color: #B07010;
+    }
+
+    .col-rid .col-title {
+      color: #007A64;
+    }
+
+    .col-subtitle {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .drop-zone {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 120px;
+      position: relative;
+    }
+
+    .drop-zone::before {
+      content: 'Перетащите сюда';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--border);
+      font-weight: 600;
+      letter-spacing: .3px;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity .2s;
+    }
+
+    .drop-zone.has-items::before {
+      opacity: 0;
+    }
+
+    /* ── CARDS ─────────────────────────────────── */
+    .card {
+      background: #F8F6FF;
+      border: 1.5px solid var(--border);
+      border-radius: 11px;
+      padding: 11px 14px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--navy);
+      cursor: grab;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+      transition: transform .18s, box-shadow .18s, border-color .18s, background .18s;
+      position: relative;
+    }
+
+    .card:active {
+      cursor: grabbing;
+    }
+
+    .card:hover {
+      border-color: var(--purple-mid);
+      background: #fff;
+      box-shadow: 0 6px 20px rgba(108, 92, 231, .12);
+      transform: translateY(-2px);
+    }
+
+    .card.dragging {
+      opacity: .45;
+      transform: scale(.97);
+      border-color: var(--purple);
+    }
+
+    .card-emoji {
+      font-size: 18px;
+      flex-shrink: 0;
+      width: 28px;
+      text-align: center;
+    }
+
+    .card-drag-handle {
+      margin-left: auto;
+      color: var(--border);
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: color .15s;
+    }
+
+    .card:hover .card-drag-handle {
+      color: var(--purple-mid);
+    }
+
+    /* card states after check */
+    .card.correct {
+      background: var(--teal-lt);
+      border-color: var(--teal);
+      color: #006A56;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .card.correct .card-drag-handle {
+      display: none;
+    }
+
+    .card.correct::after {
+      content: '✓';
+      margin-left: auto;
+      color: var(--teal);
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .card.wrong {
+      background: #FFF1F1;
+      border-color: var(--red);
+      color: #8A1F1F;
+      animation: shake .35s ease;
+      cursor: default;
+    }
+
+    .card.wrong .card-drag-handle {
+      display: none;
+    }
+
+    .card.wrong::after {
+      content: '✗';
+      margin-left: auto;
+      color: var(--red);
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20% {
+        transform: translateX(-6px);
+      }
+
+      40% {
+        transform: translateX(6px);
+      }
+
+      60% {
+        transform: translateX(-4px);
+      }
+
+      80% {
+        transform: translateX(4px);
+      }
+    }
+
+    /* ── SOURCE BANK ─────────────────────────────── */
+    .bank-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .bank {
+      background: var(--surface);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      min-height: 80px;
+      transition: border-color .2s, background .2s;
+    }
+
+    .bank.drag-over {
+      border-color: var(--purple-mid);
+      background: var(--purple-lt);
+    }
+
+    /* ── PROGRESS ─────────────────────────────── */
+    .progress-bar-wrap {
+      height: 5px;
+      background: var(--border);
+      border-radius: 3px;
+      margin: 24px 0 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple), var(--teal));
+      border-radius: 3px;
+      width: 0%;
+      transition: width .4s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .progress-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: right;
+      margin-bottom: 18px;
+    }
+
+    /* ── ACTIONS ─────────────────────────────── */
+    .actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 28px;
+      border-radius: 12px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: transform .15s, box-shadow .15s, opacity .15s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, .12);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .btn-primary:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--navy);
+      border: 2px solid var(--border);
+    }
+
+    /* ── FEEDBACK PANEL ─────────────────────────── */
+    .feedback {
+      display: none;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-top: 20px;
+      animation: fadeUp .3s ease;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    .feedback.all-correct {
+      background: var(--teal-lt);
+      border: 1.5px solid var(--teal);
+    }
+
+    .feedback.has-errors {
+      background: var(--amber-lt);
+      border: 1.5px solid var(--amber);
+    }
+
+    .feedback-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .feedback.all-correct .feedback-title {
+      color: #006A56;
+    }
+
+    .feedback.has-errors .feedback-title {
+      color: #7A4A00;
+    }
+
+    .feedback p {
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+
+    .feedback.all-correct p {
+      color: #1A5040;
+    }
+
+    .feedback.has-errors p {
+      color: #7A4A00;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ── TOOLTIP ─────────────────────────────── */
+    .tooltip {
+      position: fixed;
+      background: var(--navy);
+      color: #fff;
+      font-size: 12px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      pointer-events: none;
+      z-index: 9999;
+      max-width: 220px;
+      line-height: 1.5;
+      opacity: 0;
+      transition: opacity .15s;
+      font-family: var(--font);
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────── */
+    @media (max-width: 600px) {
+      .columns {
+        grid-template-columns: 1fr;
+      }
+
+      .col {
+        min-height: 140px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="wrapper">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-badge"><span>🧩</span> Интерактивное задание</div>
+      <h1>Идея или <em>объект ИС</em>?</h1>
+      <p>Перетащите каждую карточку в нужный столбик — определите, что является объектом интеллектуальной собственности, а
+        что пока просто идея</p>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">Распределено: 0 из 8</div>
+
+    <!-- COLUMNS -->
+    <div class="columns">
+
+      <div class="col col-idea" id="col-idea" data-col="idea" ondragover="onDragOver(event,this)"
+        ondragleave="onDragLeave(this)" ondrop="onDrop(event,this)">
+        <div class="col-header">
+          <div class="col-icon">💭</div>
+          <div>
+            <div class="col-title">Пока только идея</div>
+            <div class="col-subtitle">Не зафиксирована, нет конкретной формы</div>
+          </div>
+        </div>
+        <div class="drop-zone" id="zone-idea"></div>
+      </div>
+
+      <div class="col col-rid" id="col-rid" data-col="rid" ondragover="onDragOver(event,this)"
+        ondragleave="onDragLeave(this)" ondrop="onDrop(event,this)">
+        <div class="col-header">
+          <div class="col-icon">📋</div>
+          <div>
+            <div class="col-title">Может быть объектом ИС</div>
+            <div class="col-subtitle">Зафиксирован, передаётся, охраняется</div>
+          </div>
+        </div>
+        <div class="drop-zone" id="zone-rid"></div>
+      </div>
+
+    </div>
+
+    <!-- BANK -->
+    <div class="bank-label">↑ Перетащите карточки в нужный столбик ↑</div>
+    <div class="bank" id="bank" ondragover="onDragOver(event,this)" ondragleave="onDragLeave(this)"
+      ondrop="onDrop(event,this)">
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+      <button class="btn btn-primary" id="checkBtn" onclick="checkAnswers()" disabled>
+        ✦ Проверить ответы
+      </button>
+      <button class="btn btn-secondary" onclick="resetAll()">
+        ↺ Начать заново
+      </button>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div class="feedback" id="feedback">
+      <div class="feedback-title" id="feedbackTitle"></div>
+      <p id="feedbackText"></p>
+    </div>
+
+  </div>
+
+  <!-- TOOLTIP -->
+  <div class="tooltip" id="tooltip"></div>
+
+  <script>
+    // ── DATA ──────────────────────────────────────────────────────
+    const ITEMS = [
+      {
+        id: 'i1', emoji: '💬',
+        text: '«Как сделать новый модуль отчётов»',
+        correct: 'idea',
+        hint: 'Просто мысль вслух — пока нет ни строчки кода, ни документа'
+      },
+      {
+        id: 'i2', emoji: '🗣️',
+        text: 'Обсуждение архитектуры на встрече без записей',
+        correct: 'idea',
+        hint: 'Если после встречи нет документа или схемы — объекта ИС ещё нет'
+      },
+      {
+        id: 'i3', emoji: '💻',
+        text: 'Исходный код модуля отчётности',
+        correct: 'rid',
+        hint: 'Программа для ЭВМ — классический объект ИС, охраняется как литературное произведение'
+      },
+      {
+        id: 'i4', emoji: '📐',
+        text: 'Схема архитектуры интеграции',
+        correct: 'rid',
+        hint: 'Зафиксированная схема — это охраняемый технический документ'
+      },
+      {
+        id: 'i5', emoji: '📄',
+        text: 'Постановка на доработку',
+        correct: 'rid',
+        hint: 'Постановка — документ, созданный в рамках трудовых отношений, относится к объектам ИС'
+      },
+      {
+        id: 'i6', emoji: '✏️',
+        text: 'Черновик инструкции для пользователей',
+        correct: 'rid',
+        hint: 'Если черновик уже зафиксирован — он может считаться объектом ИС'
+      },
+    ];
+
+    // ── STATE ─────────────────────────────────────────────────────
+    let placements = {};   // id → 'idea' | 'rid' | 'bank'
+    let checked = false;
+    let dragId = null;
+
+    // ── INIT ──────────────────────────────────────────────────────
+    function init() {
+      placements = {};
+      ITEMS.forEach(item => { placements[item.id] = 'bank'; });
+      renderAll();
+      updateProgress();
+      document.getElementById('checkBtn').disabled = true;
+      const fb = document.getElementById('feedback');
+      fb.className = 'feedback';
+      checked = false;
+    }
+
+    function renderAll() {
+      const bank = document.getElementById('bank');
+      const zoneIdea = document.getElementById('zone-idea');
+      const zoneRid = document.getElementById('zone-rid');
+
+      bank.innerHTML = '';
+      zoneIdea.innerHTML = '';
+      zoneRid.innerHTML = '';
+
+      ITEMS.forEach(item => {
+        const el = buildCard(item);
+        if (placements[item.id] === 'bank') bank.appendChild(el);
+        else if (placements[item.id] === 'idea') zoneIdea.appendChild(el);
+        else if (placements[item.id] === 'rid') zoneRid.appendChild(el);
+      });
+
+      // toggle placeholder visibility
+      zoneIdea.classList.toggle('has-items', zoneIdea.children.length > 0);
+      zoneRid.classList.toggle('has-items', zoneRid.children.length > 0);
+    }
+
+    function buildCard(item) {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.id = 'card-' + item.id;
+      div.draggable = true;
+      div.dataset.id = item.id;
+      div.innerHTML = `
+    <span class="card-emoji">${item.emoji}</span>
+    <span class="card-text">${item.text}</span>
+    <span class="card-drag-handle">⠿</span>
+  `;
+
+      // Drag events
+      div.addEventListener('dragstart', e => {
+        if (checked) return;
+        dragId = item.id;
+        div.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', item.id);
+      });
+      div.addEventListener('dragend', () => {
+        dragId = null;
+        div.classList.remove('dragging');
+      });
+
+      // Touch support
+      div.addEventListener('touchstart', onTouchStart, { passive: true });
+      div.addEventListener('touchmove', onTouchMove, { passive: false });
+      div.addEventListener('touchend', onTouchEnd);
+
+      // Tooltip
+      div.addEventListener('mouseenter', e => showTooltip(item.hint, e));
+      div.addEventListener('mousemove', e => moveTooltip(e));
+      div.addEventListener('mouseleave', hideTooltip);
+
+      return div;
+    }
+
+    // ── DRAG ──────────────────────────────────────────────────────
+    function onDragOver(e, el) {
+      if (checked) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      el.classList.add('drag-over');
+    }
+    function onDragLeave(el) { el.classList.remove('drag-over'); }
+
+    function onDrop(e, el) {
+      e.preventDefault();
+      el.classList.remove('drag-over');
+      if (checked) return;
+      const id = e.dataTransfer.getData('text/plain') || dragId;
+      if (!id) return;
+      const target = el.dataset.col || 'bank';
+      placements[id] = target;
+      renderAll();
+      updateProgress();
+    }
+
+    // ── TOUCH DND ─────────────────────────────────────────────────
+    let touchCard = null, touchClone = null, touchOffX = 0, touchOffY = 0;
+
+    function onTouchStart(e) {
+      if (checked) return;
+      const card = e.currentTarget;
+      const touch = e.touches[0];
+      const rect = card.getBoundingClientRect();
+      touchCard = card;
+      touchOffX = touch.clientX - rect.left;
+      touchOffY = touch.clientY - rect.top;
+
+      touchClone = card.cloneNode(true);
+      touchClone.style.cssText = `
+    position: fixed;
+    width: ${rect.width}px;
+    opacity: .85;
+    pointer-events: none;
+    z-index: 9998;
+    transform: scale(1.04) rotate(1.5deg);
+    box-shadow: 0 12px 36px rgba(108,92,231,.22);
+    border-color: var(--purple);
+    transition: none;
+  `;
+      document.body.appendChild(touchClone);
+      positionClone(touch);
+      card.classList.add('dragging');
+      dragId = card.dataset.id;
+    }
+
+    function onTouchMove(e) {
+      if (!touchClone) return;
+      e.preventDefault();
+      positionClone(e.touches[0]);
+    }
+
+    function positionClone(touch) {
+      touchClone.style.left = (touch.clientX - touchOffX) + 'px';
+      touchClone.style.top = (touch.clientY - touchOffY) + 'px';
+    }
+
+    function onTouchEnd(e) {
+      if (!touchClone) return;
+      const touch = e.changedTouches[0];
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      const col = el ? el.closest('[data-col]') : null;
+      const bank = document.getElementById('bank');
+      const isBank = el ? (el === bank || bank.contains(el)) : false;
+
+      if (col && col.dataset.col) {
+        placements[dragId] = col.dataset.col;
+      } else if (isBank) {
+        placements[dragId] = 'bank';
+      }
+      // else: stays where it was
+
+      touchClone.remove();
+      touchClone = null;
+      touchCard.classList.remove('dragging');
+      touchCard = null;
+      dragId = null;
+      renderAll();
+      updateProgress();
+    }
+
+    // ── PROGRESS ──────────────────────────────────────────────────
+    function updateProgress() {
+      const total = ITEMS.length;
+      const placed = ITEMS.filter(i => placements[i.id] !== 'bank').length;
+      const fill = document.getElementById('progressFill');
+      const label = document.getElementById('progressLabel');
+      fill.style.width = (placed / total * 100) + '%';
+      label.textContent = `Распределено: ${placed} из ${total}`;
+      document.getElementById('checkBtn').disabled = (placed < total);
+    }
+
+    // ── CHECK ─────────────────────────────────────────────────────
+    function checkAnswers() {
+      if (checked) return;
+      checked = true;
+
+      let correct = 0;
+      ITEMS.forEach(item => {
+        const card = document.getElementById('card-' + item.id);
+        if (!card) return;
+        if (placements[item.id] === item.correct) {
+          card.classList.add('correct');
+          correct++;
+        } else {
+          card.classList.add('wrong');
+        }
+      });
+
+      const fb = document.getElementById('feedback');
+      const total = ITEMS.length;
+
+      if (correct === total) {
+        fb.className = 'feedback show all-correct';
+        document.getElementById('feedbackTitle').textContent = '🎉 Отлично! Все ответы верны';
+        document.getElementById('feedbackText').textContent =
+          'Вы правильно определили, какие варианты являются объектами интеллектуальной деятельности, а какие — пока просто идеи. Главный ориентир: если результат зафиксирован, его можно передать, скопировать или опубликовать — это может быть объект ИС.';
+      } else {
+        fb.className = 'feedback show has-errors';
+        document.getElementById('feedbackTitle').textContent =
+          `⚠ ${correct} из ${total} верно — почти!`;
+        document.getElementById('feedbackText').textContent =
+          'Карточки с ошибками отмечены красным. Обратите внимание: ключевой признак объекта ИС — результат уже зафиксирован в конкретной форме (код, документ, схема, название). Просто обсуждение или мысль без фиксации — это ещё идея. Попробуйте ещё раз!';
+      }
+
+      document.getElementById('checkBtn').disabled = true;
+    }
+
+    // ── RESET ─────────────────────────────────────────────────────
+    function resetAll() { init(); }
+
+    // ── TOOLTIP ───────────────────────────────────────────────────
+    const tooltip = document.getElementById('tooltip');
+    function showTooltip(text, e) {
+      tooltip.textContent = text;
+      moveTooltip(e);
+      tooltip.classList.add('visible');
+    }
+    function moveTooltip(e) {
+      tooltip.style.left = (e.clientX + 14) + 'px';
+      tooltip.style.top = (e.clientY - 10) + 'px';
+    }
+    function hideTooltip() { tooltip.classList.remove('visible'); }
+
+    // ── START ─────────────────────────────────────────────────────
+    init();
+  </script>
+</body>
+
+</html>
