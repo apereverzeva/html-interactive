@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Рабочее место Андрея — Что относится к ИС?</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --orange:#FF6611;
+  --orange-lt:#FFF0E8;
+  --orange-glow:rgba(255,102,17,.18);
+  --navy:#1C1A3A;
+  --navy2:#2D2A52;
+  --green:#00C48C;
+  --green-lt:#E6FAF4;
+  --red:#FF4D6D;
+  --bg:#FFFFFF;
+  --surface:#F7F6FB;
+  --border:#E8E5F5;
+  --muted:#8B87A8;
+  --font:'Onest',sans-serif;
+}
+
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--navy);
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:32px 16px 48px;
+}
+
+.page{width:100%;max-width:900px;}
+
+/* ── HEADER ────────────────────────────── */
+.top{
+  display:flex;
+  align-items:flex-start;
+  gap:24px;
+  margin-bottom:28px;
+}
+.top-text{width:100%;}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--navy);color:#fff;
+  font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  padding:4px 12px;border-radius:20px;margin-bottom:10px;
+}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);}
+h1{font-size:clamp(18px,3.5vw,26px);font-weight:800;line-height:1.25;margin-bottom:8px;}
+h1 em{font-style:normal;color:var(--orange);}
+.hint{
+  font-size:13.5px;color:var(--muted);line-height:1.65;
+  background:var(--surface);border-radius:10px;padding:10px 14px;
+  border-left:3px solid var(--orange);
+  max-width:560px;
+}
+
+/* ── SPEECH BUBBLE ─────────────────────── */
+.speech{
+  display:none;
+  position:absolute;
+  bottom:calc(100% + 10px);
+  left:50%;transform:translateX(-50%);
+  background:var(--navy);color:#fff;
+  font-size:12px;font-weight:500;line-height:1.5;
+  padding:9px 13px;border-radius:10px;
+  white-space:nowrap;
+  z-index:20;
+  pointer-events:none;
+  box-shadow:0 4px 16px rgba(0,0,0,.18);
+  animation:popIn .2s cubic-bezier(.34,1.56,.64,1);
+}
+.speech::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:var(--navy);
+}
+@keyframes popIn{
+  from{opacity:0;transform:translateX(-50%) scale(.85);}
+  to  {opacity:1;transform:translateX(-50%) scale(1);}
+}
+
+/* ── WORKSPACE SCENE ───────────────────── */
+.scene-wrap{
+  position:relative;
+  background:var(--surface);
+  border-radius:20px;
+  border:2px solid var(--border);
+  padding:24px;
+  margin-bottom:24px;
+  box-shadow:0 8px 40px rgba(28,26,58,.06);
+  overflow:hidden;
+}
+
+/* subtle grid */
+.scene-wrap::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    linear-gradient(var(--border) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:32px 32px;
+  opacity:.4;pointer-events:none;
+}
+
+.desk-label{
+  font-size:11px;font-family:monospace;color:var(--muted);
+  margin-bottom:16px;display:flex;align-items:center;gap:8px;
+}
+.desk-label::before{content:'';flex:1;height:1px;background:var(--border);}
+.desk-label::after {content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── GRID LAYOUT ───────────────────────── */
+.desk-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:auto auto;
+  gap:14px;
+  position:relative;
+  z-index:1;
+}
+
+/* ── HOTSPOT CARD ──────────────────────── */
+.hs{
+  position:relative;
+  border-radius:14px;
+  border:2px solid var(--border);
+  background:#fff;
+  overflow:visible;
+  cursor:pointer;
+  transition:transform .2s, box-shadow .2s, border-color .2s;
+  user-select:none;
+}
+.hs:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 28px rgba(28,26,58,.1);
+  border-color:var(--orange);
+}
+.hs.found{
+  border-color:var(--green);
+  background:var(--green-lt);
+  transform:translateY(-3px);
+  box-shadow:0 8px 28px rgba(0,196,140,.15);
+  animation:foundPop .35s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes foundPop{
+  0%  {transform:translateY(-3px) scale(1);}
+  40% {transform:translateY(-3px) scale(1.04);}
+  100%{transform:translateY(-3px) scale(1);}
+}
+.hs.found:hover{border-color:var(--green);}
+
+/* HS click ripple */
+.hs::after{
+  content:'';
+  position:absolute;inset:0;border-radius:12px;
+  background:var(--orange-glow);
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
+}
+.hs.ripple::after{opacity:1;}
+
+.hs-inner{padding:14px 16px;}
+
+/* ── FOUND BADGE ───────────────────────── */
+.found-badge{
+  position:absolute;top:-10px;right:-10px;
+  width:26px;height:26px;border-radius:50%;
+  background:var(--green);color:#fff;
+  font-size:13px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(0,196,140,.4);
+  opacity:0;transform:scale(0);
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  z-index:10;
+}
+.hs.found .found-badge{opacity:1;transform:scale(1);}
+
+/* ── CLICK HINT PULSE ──────────────────── */
+.pulse-ring{
+  position:absolute;top:-14px;right:-14px;
+  width:34px;height:34px;border-radius:50%;
+  border:2px solid var(--orange);
+  animation:pulseRing 2s ease-in-out infinite;
+  pointer-events:none;z-index:5;
+}
+.hs.found .pulse-ring{display:none;}
+@keyframes pulseRing{
+  0%   {transform:scale(.8);opacity:.8;}
+  50%  {transform:scale(1.3);opacity:0;}
+  100% {transform:scale(.8);opacity:0;}
+}
+
+/* ── APP CARD ELEMENTS ─────────────────── */
+.app-titlebar{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 12px;
+  border-radius:10px 10px 0 0;
+  border-bottom:1px solid rgba(0,0,0,.07);
+  margin:-14px -16px 12px;
+}
+.win-dots{display:flex;gap:5px;}
+.win-dot{width:10px;height:10px;border-radius:50%;}
+.app-name{font-size:11px;font-weight:600;color:#fff;opacity:.85;margin-left:4px;}
+.app-tag{
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;
+  margin-left:auto;letter-spacing:.3px;
+}
+
+/* IDE */
+.ide .app-titlebar{background:#1e1e2e;}
+.code-line{display:flex;gap:10px;margin-bottom:5px;align-items:center;}
+.ln{font-family:monospace;font-size:10px;color:#555;width:16px;flex-shrink:0;}
+.code-token{height:8px;border-radius:3px;}
+.cursor-blink{
+  display:inline-block;width:2px;height:12px;background:#FF6611;
+  animation:blink 1s step-end infinite;vertical-align:middle;margin-left:2px;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* Figma */
+.figma .app-titlebar{background:#1e1e1e;}
+.figma-canvas{
+  background:#2c2c2c;border-radius:8px;
+  padding:10px;display:flex;flex-direction:column;gap:8px;
+}
+.fig-frame{border:1px solid #555;border-radius:5px;background:#fff;padding:8px;}
+.fig-nav{height:20px;background:#f0f0f0;border-radius:3px;margin-bottom:6px;
+  display:flex;align-items:center;gap:4px;padding:0 6px;}
+.fig-nav-dot{width:6px;height:6px;border-radius:50%;background:#ddd;}
+.fig-hero{height:28px;border-radius:3px;background:linear-gradient(90deg,#FF6611,#ff8c44);}
+.fig-cols{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:4px;}
+.fig-col{height:16px;border-radius:3px;background:#eee;}
+.fig-layers{
+  display:flex;flex-direction:column;gap:4px;
+  background:#252525;border-radius:5px;padding:6px 8px;
+}
+.fig-layer{display:flex;align-items:center;gap:5px;font-size:9px;color:#bbb;}
+.fig-layer-icon{font-size:9px;}
+
+/* TZ doc */
+.tzdoc .app-titlebar{background:#2563eb;}
+.doc-content{display:flex;flex-direction:column;gap:6px;}
+.doc-heading{height:10px;border-radius:3px;background:#1e3a8a;width:65%;}
+.doc-line{height:6px;border-radius:2px;background:#dbeafe;}
+.doc-line.short{width:80%;}
+.doc-line.med  {width:92%;}
+.doc-section{
+  margin-top:4px;padding:6px 8px;border-radius:5px;
+  background:#eff6ff;border-left:3px solid #2563eb;
+}
+.doc-req{font-size:9px;color:#1e40af;font-weight:600;margin-bottom:3px;}
+.doc-req-line{height:5px;border-radius:2px;background:#bfdbfe;margin-bottom:2px;}
+
+/* Architecture */
+.arch .app-titlebar{background:#7c3aed;}
+.arch-diagram{
+  display:flex;flex-direction:column;gap:6px;align-items:center;
+}
+.arch-row{display:flex;gap:8px;align-items:center;justify-content:center;}
+.arch-box{
+  border-radius:6px;padding:4px 8px;
+  font-size:9px;font-weight:700;
+  border:1.5px solid;text-align:center;line-height:1.3;
+}
+.arch-box.client  {background:#ede9fe;border-color:#7c3aed;color:#5b21b6;}
+.arch-box.api     {background:#fef3c7;border-color:#f59e0b;color:#92400e;}
+.arch-box.db      {background:#d1fae5;border-color:#10b981;color:#065f46;}
+.arch-box.cache   {background:#fee2e2;border-color:#ef4444;color:#991b1b;}
+.arch-box.svc     {background:#dbeafe;border-color:#3b82f6;color:#1e40af;}
+.arch-arrow{font-size:10px;color:#aaa;}
+.arch-line{width:1px;height:14px;background:#ddd;align-self:center;}
+
+/* Repo */
+.repo .app-titlebar{background:#24292e;}
+.repo-header{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 0;border-bottom:1px solid #e8e8e8;margin-bottom:8px;
+}
+.repo-name{font-size:11px;font-weight:700;color:#0969da;}
+.repo-branch{
+  font-size:9px;padding:2px 7px;border-radius:10px;
+  background:#ddf4ff;color:#0550ae;font-weight:600;margin-left:auto;
+}
+.repo-file{
+  display:flex;align-items:center;gap:7px;padding:4px 6px;
+  border-radius:4px;font-size:10px;
+  transition:background .15s;margin-bottom:2px;
+  cursor:pointer;
+}
+.repo-file:hover{background:#f6f8fa;}
+.repo-file-icon{font-size:11px;flex-shrink:0;}
+.repo-file-name{color:#24292e;font-weight:500;}
+.repo-file-time{color:#aaa;font-size:9px;margin-left:auto;}
+.repo-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:9px;padding:2px 6px;border-radius:3px;
+  background:#eafbf1;color:#1a7f37;font-weight:600;
+}
+
+/* ── COUNTER BAR ───────────────────────── */
+.counter-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 4px;margin-bottom:18px;
+}
+.progress-dots{display:flex;gap:8px;}
+.p-dot{
+  width:12px;height:12px;border-radius:50%;
+  border:2px solid var(--border);background:#fff;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+}
+.p-dot.active{
+  background:var(--green);border-color:var(--green);
+  box-shadow:0 0 8px rgba(0,196,140,.4);
+  transform:scale(1.2);
+}
+.counter-text{font-size:13px;font-weight:600;color:var(--muted);}
+.counter-text span{color:var(--navy);}
+
+/* ── FEEDBACK PANEL ─────────────────────── */
+.feedback{
+  display:none;
+  background:var(--green-lt);
+  border:2px solid var(--green);
+  border-radius:16px;
+  padding:22px 24px;
+  animation:slideUp .4s cubic-bezier(.34,1.56,.64,1);
+  margin-bottom:16px;
+}
+.feedback.show{display:block;}
+@keyframes slideUp{
+  from{opacity:0;transform:translateY(16px);}
+  to  {opacity:1;transform:translateY(0);}
+}
+.fb-title{
+  display:flex;align-items:center;gap:10px;
+  font-size:17px;font-weight:800;color:#065f46;margin-bottom:10px;
+}
+.fb-icon{font-size:26px;}
+.fb-text{font-size:14px;line-height:1.7;color:#047857;}
+.fb-chain{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;
+}
+.fb-chip{
+  display:flex;align-items:center;gap:5px;
+  background:#fff;border:1.5px solid var(--green);
+  border-radius:20px;padding:5px 13px;
+  font-size:12px;font-weight:600;color:#065f46;
+}
+.fb-chip-plus{color:var(--green);font-size:14px;font-weight:800;align-self:center;}
+
+/* ── ANDREY CORNER ─────────────────────── */
+.andrey-corner{
+  position:absolute;bottom:0;right:16px;
+  width:90px;pointer-events:none;z-index:2;
+  opacity:.92;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,.1));
+}
+
+/* ── TOOLTIP ────────────────────────────── */
+.hs-tooltip{
+  position:absolute;
+  bottom:calc(100% + 12px);left:50%;
+  transform:translateX(-50%);
+  background:var(--navy);color:#fff;
+  font-size:12px;font-weight:500;padding:8px 13px;
+  border-radius:9px;white-space:nowrap;
+  pointer-events:none;z-index:30;
+  opacity:0;
+  transition:opacity .15s;
+  box-shadow:0 4px 16px rgba(0,0,0,.2);
+  line-height:1.4;
+  text-align:center;
+  max-width:200px;
+  white-space:normal;
+}
+.hs-tooltip::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:var(--navy);
+}
+.hs:hover .hs-tooltip:not(.hide){opacity:1;}
+.hs.found .hs-tooltip{display:none;}
+
+/* ── TASK LABEL ─────────────────────────── */
+.task-label{
+  display:flex;align-items:center;gap:10px;
+  font-size:14px;font-weight:700;color:var(--navy);
+  margin-bottom:14px;
+}
+.task-label .tl-icon{
+  width:32px;height:32px;border-radius:9px;
+  background:var(--orange-lt);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
+}
+.task-label .tl-badge{
+  margin-left:auto;font-size:12px;font-weight:600;color:var(--muted);
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- TOP HEADER -->
+  <div class="top">
+    <div class="top-text">
+      <div class="badge"><div class="badge-dot"></div>Интерактивное задание</div>
+      <h1>Рабочее место Андрея —<br>что может быть <em>объектом ИС</em>?</h1>
+      <p class="hint">👆 Нажмите на каждый объект на рабочем столе, который может относиться к интеллектуальной собственности</p>
+    </div>
+  </div>
+
+  <!-- COUNTER BAR -->
+  <div class="counter-bar">
+    <div class="progress-dots">
+      <div class="p-dot" id="dot-0"></div>
+      <div class="p-dot" id="dot-1"></div>
+      <div class="p-dot" id="dot-2"></div>
+      <div class="p-dot" id="dot-3"></div>
+      <div class="p-dot" id="dot-4"></div>
+    </div>
+    <div class="counter-text">Найдено: <span id="countSpan">0</span> из 5</div>
+  </div>
+
+  <!-- TASK LABEL -->
+  <div class="task-label">
+    <div class="tl-icon">🖥️</div>
+    Рабочий стол Андрея
+    <span class="tl-badge">Нажмите на всё, что относится к ИС →</span>
+  </div>
+
+  <!-- WORKSPACE SCENE -->
+  <div class="scene-wrap">
+    <div class="desk-label">андрей · naumen · рабочая сессия</div>
+
+    <div class="desk-grid">
+
+      <!-- 1. IDE -->
+      <div class="hs ide" id="hs-ide" onclick="found('ide')" tabindex="0" role="button" aria-label="IDE с кодом">
+        <div class="found-badge">✓</div>
+        <div class="pulse-ring"></div>
+        <div class="hs-tooltip">Нажмите — это объект ИС?</div>
+        <div class="hs-inner">
+          <div class="app-titlebar">
+            <div class="win-dots">
+              <div class="win-dot" style="background:#ff5f57"></div>
+              <div class="win-dot" style="background:#febc2e"></div>
+              <div class="win-dot" style="background:#28c840"></div>
+            </div>
+            <span class="app-name">naumen-core — main.ts</span>
+            <span class="app-tag" style="background:#FF661122;color:#FF6611">IDE</span>
+          </div>
+
+          <div style="background:#1e1e2e;border-radius:8px;padding:10px 12px;">
+            <div class="code-line"><span class="ln">1</span><div class="code-token" style="width:48px;background:#c792ea"></div><div class="code-token" style="width:34px;background:#82aaff;margin-left:6px"></div><div class="code-token" style="width:20px;background:#fff;opacity:.15;margin-left:6px"></div></div>
+            <div class="code-line"><span class="ln">2</span><div class="code-token" style="width:20px;background:#c792ea"></div><div class="code-token" style="width:60px;background:#a6e22e;margin-left:6px"></div><div class="code-token" style="width:8px;background:#fff;opacity:.15;margin-left:6px"></div></div>
+            <div class="code-line"><span class="ln">3</span><div style="width:16px;background:transparent"></div><div class="code-token" style="width:44px;background:#FF6611;margin-left:6px"></div><div class="code-token" style="width:28px;background:#a6e22e;margin-left:6px"></div></div>
+            <div class="code-line"><span class="ln">4</span><div style="width:16px"></div><div class="code-token" style="width:80px;background:#82aaff;margin-left:6px"></div><span class="cursor-blink"></span></div>
+            <div class="code-line"><span class="ln">5</span><div class="code-token" style="width:8px;background:#fff;opacity:.2"></div></div>
+            <div class="code-line"><span class="ln">6</span><div class="code-token" style="width:48px;background:#7fdbca"></div><div class="code-token" style="width:20px;background:#fff;opacity:.15;margin-left:6px"></div></div>
+          </div>
+
+          <div style="display:flex;gap:6px;margin-top:10px;">
+            <div style="font-size:10px;color:#aaa;background:#f6f6f6;padding:3px 8px;border-radius:4px">📁 src/</div>
+            <div style="font-size:10px;color:#aaa;background:#f6f6f6;padding:3px 8px;border-radius:4px">📁 modules/</div>
+            <div style="font-size:10px;color:#FF6611;background:#fff0e8;padding:3px 8px;border-radius:4px;font-weight:600">● main.ts</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Figma -->
+      <div class="hs figma" id="hs-figma" onclick="found('figma')" tabindex="0" role="button" aria-label="Figma макет интерфейса">
+        <div class="found-badge">✓</div>
+        <div class="pulse-ring"></div>
+        <div class="hs-tooltip">Нажмите — это объект ИС?</div>
+        <div class="hs-inner">
+          <div class="app-titlebar">
+            <div class="win-dots">
+              <div class="win-dot" style="background:#ff5f57"></div>
+              <div class="win-dot" style="background:#febc2e"></div>
+              <div class="win-dot" style="background:#28c840"></div>
+            </div>
+            <span class="app-name">naumen-ui — Desktop.fig</span>
+            <span class="app-tag" style="background:#ffffff22;color:#eee">Figma</span>
+          </div>
+
+          <div class="figma-canvas">
+            <div class="fig-frame">
+              <div class="fig-nav">
+                <div class="fig-nav-dot"></div>
+                <div style="flex:1;height:6px;background:#e0e0e0;border-radius:3px;margin-left:4px"></div>
+                <div style="width:28px;height:6px;background:#FF6611;border-radius:3px;opacity:.6"></div>
+              </div>
+              <div class="fig-hero"></div>
+              <div class="fig-cols">
+                <div class="fig-col"></div>
+                <div class="fig-col" style="background:#f5e8ff"></div>
+              </div>
+            </div>
+            <div class="fig-layers">
+              <div class="fig-layer"><span class="fig-layer-icon">▾</span><span>Frame / Desktop</span></div>
+              <div class="fig-layer" style="padding-left:10px"><span class="fig-layer-icon">▾</span><span style="color:#FF6611">Header</span></div>
+              <div class="fig-layer" style="padding-left:20px"><span>🔲</span><span>Nav</span></div>
+              <div class="fig-layer" style="padding-left:20px"><span>🔲</span><span>Hero</span></div>
+              <div class="fig-layer" style="padding-left:10px"><span>▸</span><span>Content</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. TZ Document -->
+      <div class="hs tzdoc" id="hs-tz" onclick="found('tz')" tabindex="0" role="button" aria-label="Техническое задание">
+        <div class="found-badge">✓</div>
+        <div class="pulse-ring"></div>
+        <div class="hs-tooltip">Нажмите — это объект ИС?</div>
+        <div class="hs-inner">
+          <div class="app-titlebar">
+            <div class="win-dots">
+              <div class="win-dot" style="background:#ff5f57"></div>
+              <div class="win-dot" style="background:#febc2e"></div>
+              <div class="win-dot" style="background:#28c840"></div>
+            </div>
+            <span class="app-name">ТЗ — Модуль отчётности v2.docx</span>
+            <span class="app-tag" style="background:#ffffff33;color:#fff">ТЗ</span>
+          </div>
+
+          <div class="doc-content">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+              <div style="font-size:18px">📄</div>
+              <div>
+                <div style="font-size:11px;font-weight:700;color:#1e3a8a">Техническое задание</div>
+                <div style="font-size:10px;color:#6b7280">Модуль аналитики · v2.1</div>
+              </div>
+              <div style="margin-left:auto;font-size:9px;padding:2px 7px;border-radius:10px;background:#dbeafe;color:#1d4ed8;font-weight:600">DRAFT</div>
+            </div>
+            <div class="doc-heading"></div>
+            <div class="doc-line med"></div>
+            <div class="doc-line short"></div>
+            <div class="doc-line med"></div>
+            <div class="doc-section">
+              <div class="doc-req">1. Функциональные требования</div>
+              <div class="doc-req-line"></div>
+              <div class="doc-req-line" style="width:75%"></div>
+              <div class="doc-req-line" style="width:88%"></div>
+            </div>
+            <div style="display:flex;gap:6px;margin-top:6px;">
+              <div style="font-size:9px;padding:2px 7px;border-radius:4px;background:#f0fdf4;color:#15803d;font-weight:600">✓ Согласовано</div>
+              <div style="font-size:9px;padding:2px 7px;border-radius:4px;background:#fef9c3;color:#854d0e;font-weight:600">⏳ На ревью</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Architecture -->
+      <div class="hs arch" id="hs-arch" onclick="found('arch')" tabindex="0" role="button" aria-label="Архитектурная схема">
+        <div class="found-badge">✓</div>
+        <div class="pulse-ring"></div>
+        <div class="hs-tooltip">Нажмите — это объект ИС?</div>
+        <div class="hs-inner">
+          <div class="app-titlebar">
+            <div class="win-dots">
+              <div class="win-dot" style="background:#ff5f57"></div>
+              <div class="win-dot" style="background:#febc2e"></div>
+              <div class="win-dot" style="background:#28c840"></div>
+            </div>
+            <span class="app-name">arch-diagram.drawio</span>
+            <span class="app-tag" style="background:#ffffff22;color:#eee">Schema</span>
+          </div>
+
+          <div class="arch-diagram">
+            <div class="arch-row">
+              <div class="arch-box client">Client<br>App</div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box api">API<br>Gateway</div>
+            </div>
+            <div style="display:flex;gap:24px;justify-content:center;margin:2px 0">
+              <div class="arch-line" style="margin-left:22px"></div>
+              <div class="arch-line" style="margin-right:22px"></div>
+            </div>
+            <div class="arch-row">
+              <div class="arch-box svc">Auth<br>Service</div>
+              <div class="arch-box svc">Report<br>Service</div>
+              <div class="arch-box svc">Data<br>Service</div>
+            </div>
+            <div style="display:flex;gap:24px;justify-content:center;margin:2px 0">
+              <div class="arch-line" style="margin-left:60px"></div>
+              <div class="arch-line" style="margin-right:60px"></div>
+            </div>
+            <div class="arch-row">
+              <div class="arch-box db">PostgreSQL</div>
+              <div class="arch-box cache">Redis</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Repository — full width -->
+      <div class="hs repo" id="hs-repo" onclick="found('repo')" tabindex="0" role="button" aria-label="Репозиторий" style="grid-column:1/-1">
+        <div class="found-badge">✓</div>
+        <div class="pulse-ring"></div>
+        <div class="hs-tooltip">Нажмите — это объект ИС?</div>
+        <div class="hs-inner">
+          <div class="app-titlebar">
+            <div class="win-dots">
+              <div class="win-dot" style="background:#ff5f57"></div>
+              <div class="win-dot" style="background:#febc2e"></div>
+              <div class="win-dot" style="background:#28c840"></div>
+            </div>
+            <span class="app-name">gitlab.naumen.ru / naumen-core</span>
+            <span class="app-tag" style="background:#ffffff22;color:#eee">Repository</span>
+          </div>
+
+          <div class="repo-header">
+            <span style="font-size:14px">📦</span>
+            <span class="repo-name">naumen / naumen-core</span>
+            <div style="display:flex;gap:6px;align-items:center;margin-left:8px">
+              <span class="repo-badge">⭐ 47</span>
+              <span class="repo-badge" style="background:#fff3cd;color:#856404">🍴 12</span>
+            </div>
+            <span class="repo-branch">main</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
+            <div class="repo-file"><span class="repo-file-icon">📁</span><span class="repo-file-name">src/</span><span class="repo-file-time">2h ago</span></div>
+            <div class="repo-file"><span class="repo-file-icon">📁</span><span class="repo-file-name">modules/</span><span class="repo-file-time">1d ago</span></div>
+            <div class="repo-file"><span class="repo-file-icon">📁</span><span class="repo-file-name">docs/</span><span class="repo-file-time">3d ago</span></div>
+            <div class="repo-file"><span class="repo-file-icon">📄</span><span class="repo-file-name">README.md</span><span class="repo-file-time">1d ago</span></div>
+            <div class="repo-file"><span class="repo-file-icon">⚙️</span><span class="repo-file-name">package.json</span><span class="repo-file-time">5h ago</span></div>
+            <div class="repo-file" style="background:#fff0e8;"><span class="repo-file-icon">🔑</span><span class="repo-file-name" style="color:#FF6611">config.env</span><span class="repo-file-time" style="color:#FF6611">!!</span></div>
+            <div class="repo-file"><span class="repo-file-icon">🧪</span><span class="repo-file-name">tests/</span><span class="repo-file-time">1d ago</span></div>
+            <div class="repo-file"><span class="repo-file-icon">🐳</span><span class="repo-file-name">Dockerfile</span><span class="repo-file-time">3d ago</span></div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid #eee;flex-wrap:wrap;">
+            <div style="font-size:10px;display:flex;align-items:center;gap:4px;color:#555">
+              <div style="width:10px;height:10px;border-radius:50%;background:#3178c6"></div>TypeScript 68%
+            </div>
+            <div style="font-size:10px;display:flex;align-items:center;gap:4px;color:#555">
+              <div style="width:10px;height:10px;border-radius:50%;background:#f1e05a"></div>JavaScript 22%
+            </div>
+            <div style="font-size:10px;display:flex;align-items:center;gap:4px;color:#555">
+              <div style="width:10px;height:10px;border-radius:50%;background:#e34c26"></div>HTML 10%
+            </div>
+            <div style="font-size:10px;color:#aaa;margin-left:auto">🕐 Last commit: 2h ago · andrey@naumen</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /desk-grid -->
+  </div><!-- /scene-wrap -->
+
+  <!-- FEEDBACK -->
+  <div class="feedback" id="feedback">
+    <div class="fb-title">
+      <span class="fb-icon">🎉</span>
+      Да, всё это может быть связано с интеллектуальной собственностью!
+    </div>
+    <div class="fb-text">
+      В IT ценность часто находится не в одном файле, а в связке — когда несколько объектов вместе формируют охраняемый результат. Даже небольшой фрагмент может быть частью объекта ИС компании.
+    </div>
+    <div class="fb-chain">
+      <div class="fb-chip">💻 Код</div>
+      <div class="fb-chip-plus">+</div>
+      <div class="fb-chip">🎨 Интерфейс</div>
+      <div class="fb-chip-plus">+</div>
+      <div class="fb-chip">📄 Документация</div>
+      <div class="fb-chip-plus">+</div>
+      <div class="fb-chip">📐 Схема</div>
+      <div class="fb-chip-plus">+</div>
+      <div class="fb-chip">📦 Данные</div>
+      <div class="fb-chip-plus">=</div>
+      <div class="fb-chip" style="background:var(--orange);border-color:var(--orange);color:#fff">🔐 Объект ИС</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+const ORDER = ['ide','figma','tz','arch','repo'];
+const FOUND = new Set();
+
+const TOOLTIPS = {
+  ide:   'Исходный код',
+  figma: 'UI-макет в Figma',
+  tz:    'Техническое задание',
+  arch:  'Архитектурная схема',
+  repo:  'Репозиторий с кодом',
+};
+
+function found(id) {
+  if (FOUND.has(id)) return;
+  FOUND.add(id);
+
+  const el = document.getElementById('hs-' + id);
+  el.classList.add('found');
+  el.classList.add('ripple');
+  setTimeout(() => el.classList.remove('ripple'), 400);
+
+  // update dots
+  const idx = ORDER.indexOf(id);
+  document.getElementById('dot-' + FOUND.size - 1);
+  // fill dots in order of discovery
+  const filled = FOUND.size;
+  for (let i = 0; i < filled; i++) {
+    document.getElementById('dot-' + i).classList.add('active');
+  }
+
+  document.getElementById('countSpan').textContent = FOUND.size;
+
+  // pop a mini toast
+  showMini(el, TOOLTIPS[id]);
+
+  if (FOUND.size === ORDER.length) {
+    setTimeout(() => {
+      document.getElementById('feedback').classList.add('show');
+      document.getElementById('feedback').scrollIntoView({behavior:'smooth', block:'nearest'});
+    }, 400);
+  }
+}
+
+function showMini(el, label) {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position:fixed;
+    background:#1C1A3A;
+    color:#fff;
+    font-family:'Onest',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:10px;
+    box-shadow:0 4px 20px rgba(0,0,0,.18);
+    pointer-events:none;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    border-left:3px solid #00C48C;
+    opacity:0;
+    transform:translateY(8px);
+    transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  `;
+  toast.innerHTML = `<span style="color:#00C48C;font-size:16px">✓</span> ${label} — объект ИС!`;
+  document.body.appendChild(toast);
+
+  const r = el.getBoundingClientRect();
+  toast.style.left  = Math.min(r.left, window.innerWidth - 280) + 'px';
+  toast.style.top   = (r.top + window.scrollY - 50) + 'px';
+
+  requestAnimationFrame(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+  });
+
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-8px)';
+    setTimeout(() => toast.remove(), 300);
+  }, 1800);
+}
+
+// Keyboard support
+document.querySelectorAll('.hs').forEach(el => {
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      el.click();
+    }
+  });
+});
+</script>
+</body>
+</html>
