@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Кейс: вопрос клиента по лицензии Consul</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F5F3FF;
+  --surface:#FFFFFF;
+  --navy:#1C1A3A;
+  --navy2:#2D2A52;
+  --purple:#6C5CE7;
+  --purple-lt:#EDE9FF;
+  --orange:#FF6611;
+  --orange-lt:#FFF0E8;
+  --green:#00C48C;
+  --green-lt:#E6FAF4;
+  --red:#FF4D6D;
+  --red-lt:#FFF0F3;
+  --amber:#FFB347;
+  --amber-lt:#FFF8ED;
+  --blue:#3B82F6;
+  --blue-lt:#EFF6FF;
+  --muted:#8B87A8;
+  --border:#E4DEFF;
+  --mono:'JetBrains Mono',monospace;
+  --font:'Onest',sans-serif;
+}
+
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--navy);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  padding:32px 16px 56px;
+}
+
+.wrap{width:100%;max-width:720px;}
+
+/* ── HEADER ─────────────────────────────── */
+.badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--navy);color:#fff;
+  font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
+  padding:4px 12px;border-radius:20px;margin-bottom:18px;
+}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);}
+h1{font-size:clamp(20px,3.5vw,28px);font-weight:800;line-height:1.25;margin-bottom:10px;}
+h1 em{font-style:normal;color:var(--orange);}
+.intro{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:28px;max-width:580px;}
+
+/* ── CHAT BUBBLE ─────────────────────────── */
+.chat{
+  display:flex;flex-direction:column;gap:12px;
+  margin-bottom:28px;
+}
+.msg{
+  display:flex;gap:10px;align-items:flex-start;
+  animation:msgIn .3s ease both;
+}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg.right{flex-direction:row-reverse;}
+.msg-avatar{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;font-weight:700;
+}
+.msg-body{max-width:82%;}
+.msg-name{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.msg.right .msg-name{text-align:right;}
+.msg-bubble{
+  padding:13px 16px;border-radius:14px;
+  font-size:13.5px;line-height:1.65;
+}
+.msg.left  .msg-bubble{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:4px 14px 14px 14px;
+}
+.msg.right .msg-bubble{
+  background:var(--navy);color:rgba(255,255,255,.88);
+  border-radius:14px 4px 14px 14px;
+}
+.msg-time{font-size:10px;color:var(--muted);margin-top:4px;font-family:var(--mono);}
+.msg.right .msg-time{text-align:right;}
+
+/* ── SECTION DIVIDER ─────────────────────── */
+.divider{
+  display:flex;align-items:center;gap:12px;
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.6px;color:var(--muted);
+  margin:28px 0 20px;
+}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── STEP CARD ───────────────────────────── */
+.step-card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+  margin-bottom:14px;
+  transition:border-color .2s, box-shadow .2s;
+}
+.step-card.active{
+  border-color:var(--purple);
+  box-shadow:0 0 0 3px rgba(108,92,231,.08);
+}
+.step-card.done{border-color:var(--green);}
+
+.step-head{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;
+  cursor:pointer;
+  user-select:none;
+}
+.step-num{
+  width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;font-family:var(--mono);
+  background:var(--bg);border:1.5px solid var(--border);
+  color:var(--muted);flex-shrink:0;
+  transition:all .2s;
+}
+.step-card.active .step-num{background:var(--purple);border-color:var(--purple);color:#fff;}
+.step-card.done   .step-num{background:var(--green);border-color:var(--green);color:#fff;}
+.step-title{font-size:14px;font-weight:700;flex:1;}
+.step-arrow{
+  font-size:16px;color:var(--muted);
+  transition:transform .25s;
+}
+.step-card.open .step-arrow{transform:rotate(180deg);}
+
+.step-body{
+  display:none;
+  padding:0 20px 20px;
+  border-top:1px solid var(--border);
+}
+.step-card.open .step-body{display:block;}
+
+/* ── LICENSE COMPARISON ──────────────────── */
+.lic-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;margin:16px 0;
+}
+.lic-card{
+  border-radius:12px;padding:14px 16px;
+  border:1.5px solid;
+}
+.lic-card.old{background:#F0FDF4;border-color:#86EFAC;}
+.lic-card.new{background:#FFF7ED;border-color:#FED7AA;}
+.lic-label{
+  font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;
+  margin-bottom:8px;display:flex;align-items:center;gap:6px;
+}
+.lic-card.old .lic-label{color:#16a34a;}
+.lic-card.new .lic-label{color:#ea580c;}
+.lic-name{
+  font-size:13px;font-weight:700;margin-bottom:8px;font-family:var(--mono);
+}
+.lic-card.old .lic-name{color:#15803d;}
+.lic-card.new .lic-name{color:#c2410c;}
+.lic-rule{
+  font-size:12px;line-height:1.5;
+  display:flex;align-items:flex-start;gap:6px;margin-bottom:5px;
+}
+.lic-card.old .lic-rule{color:#166534;}
+.lic-card.new .lic-rule{color:#9a3412;}
+.lic-icon{flex-shrink:0;margin-top:1px;}
+
+/* ── KEY QUESTION ────────────────────────── */
+.key-q{
+  background:var(--navy);border-radius:12px;
+  padding:16px 18px;margin:16px 0;
+  display:flex;align-items:flex-start;gap:12px;
+}
+.key-q-icon{font-size:22px;flex-shrink:0;margin-top:2px;}
+.key-q-text{
+  font-size:14px;font-weight:700;color:#fff;line-height:1.5;
+}
+.key-q-sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:5px;line-height:1.5;font-weight:400;}
+
+/* ── CHOICE BUTTONS ──────────────────────── */
+.choices{display:flex;flex-direction:column;gap:8px;margin-top:16px;}
+.choice{
+  background:var(--bg);border:2px solid var(--border);
+  border-radius:12px;padding:13px 16px;
+  cursor:pointer;display:flex;align-items:center;gap:12px;
+  font-size:13.5px;font-weight:500;color:var(--navy);
+  transition:all .18s;text-align:left;font-family:var(--font);
+  width:100%;
+}
+.choice:hover{border-color:var(--purple);background:var(--purple-lt);transform:translateX(3px);}
+.choice-letter{
+  width:26px;height:26px;border-radius:7px;
+  background:var(--surface);border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:var(--muted);
+  flex-shrink:0;font-family:var(--mono);
+  transition:all .18s;
+}
+.choice:hover .choice-letter{background:var(--purple);border-color:var(--purple);color:#fff;}
+.choice.correct{background:var(--green-lt);border-color:var(--green);pointer-events:none;}
+.choice.correct .choice-letter{background:var(--green);border-color:var(--green);color:#fff;}
+.choice.wrong{background:var(--red-lt);border-color:var(--red);pointer-events:none;animation:shake .3s ease;}
+.choice.wrong .choice-letter{background:var(--red);border-color:var(--red);color:#fff;}
+.choice.dim{opacity:.4;pointer-events:none;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* ── FEEDBACK ────────────────────────────── */
+.feedback{
+  display:none;border-radius:12px;padding:14px 16px;
+  margin-top:12px;font-size:13.5px;line-height:1.65;
+  animation:fadeUp .3s ease;
+}
+.feedback.show{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.feedback.good{background:var(--green-lt);border:1.5px solid var(--green);color:#065f46;}
+.feedback.bad {background:var(--red-lt);border:1.5px solid var(--red);color:#9f1239;}
+.fb-title{font-weight:800;display:flex;align-items:center;gap:7px;margin-bottom:6px;}
+
+/* ── BSL CRITERIA ────────────────────────── */
+.criteria-list{display:flex;flex-direction:column;gap:8px;margin:16px 0;}
+.criterion{
+  display:flex;align-items:flex-start;gap:12px;
+  background:var(--bg);border:1.5px solid var(--border);
+  border-radius:11px;padding:12px 14px;
+  font-size:13px;line-height:1.5;
+  transition:all .3s;
+  cursor:default;
+}
+.criterion.yes{background:var(--red-lt);border-color:var(--red);}
+.criterion.no {background:var(--green-lt);border-color:var(--green);}
+.criterion-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.criterion-text{flex:1;color:var(--navy2);}
+.criterion-text strong{color:var(--navy);}
+.criterion-verdict{
+  font-size:11px;font-weight:800;padding:2px 8px;
+  border-radius:4px;font-family:var(--mono);
+  flex-shrink:0;margin-top:2px;
+}
+.criterion.yes .criterion-verdict{background:var(--red);color:#fff;}
+.criterion.no  .criterion-verdict{background:var(--green);color:#fff;}
+
+/* ── TOGGLE REVEAL ───────────────────────── */
+.reveal-btn{
+  display:flex;align-items:center;gap:8px;
+  background:none;border:1.5px solid var(--border);
+  border-radius:10px;padding:10px 16px;
+  font-family:var(--font);font-size:13px;font-weight:600;
+  color:var(--muted);cursor:pointer;
+  transition:all .15s;margin-top:12px;
+}
+.reveal-btn:hover{border-color:var(--purple);color:var(--purple);}
+.reveal-content{display:none;margin-top:12px;}
+.reveal-content.show{display:block;animation:fadeUp .3s ease;}
+
+/* ── FINAL ANSWER ────────────────────────── */
+.final-answer{
+  background:var(--navy);border-radius:16px;
+  padding:22px 24px;margin-top:8px;
+  display:none;
+}
+.final-answer.show{display:block;animation:fadeUp .4s cubic-bezier(.34,1.56,.64,1);}
+.fa-label{
+  font-size:10px;font-family:var(--mono);color:var(--orange);
+  text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px;
+}
+.fa-bubble{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;padding:14px 16px;
+  font-size:14px;line-height:1.7;color:rgba(255,255,255,.88);
+  font-style:italic;
+}
+.fa-note{
+  margin-top:12px;font-size:12.5px;color:rgba(255,255,255,.5);
+  line-height:1.6;
+}
+.fa-note strong{color:rgba(255,255,255,.75);}
+
+/* ── RESULT BANNER ───────────────────────── */
+.result-banner{
+  background:linear-gradient(135deg,var(--green-lt),#fff);
+  border:2px solid var(--green);
+  border-radius:16px;padding:22px 24px;
+  margin-top:28px;
+  display:none;
+}
+.result-banner.show{display:block;animation:fadeUp .4s ease;}
+.rb-title{font-size:18px;font-weight:800;color:#065f46;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.rb-text{font-size:13.5px;color:#047857;line-height:1.7;}
+.rb-rule{
+  margin-top:14px;padding:12px 14px;
+  background:rgba(0,196,140,.1);border-radius:10px;
+  font-size:12.5px;color:#065f46;line-height:1.6;
+  font-family:var(--mono);
+}
+
+/* ── NEXT STEP BTN ───────────────────────── */
+.next-step-btn{
+  display:none;
+  align-items:center;gap:8px;
+  background:var(--purple);color:#fff;border:none;
+  border-radius:12px;padding:13px 22px;
+  font-family:var(--font);font-size:13.5px;font-weight:700;
+  cursor:pointer;margin-top:14px;
+  transition:all .15s;
+}
+.next-step-btn.show{display:inline-flex;}
+.next-step-btn:hover{background:var(--navy);transform:translateY(-2px);}
+
+/* ── PROGRESS ────────────────────────────── */
+.progress-wrap{
+  display:flex;gap:6px;margin-bottom:28px;align-items:center;
+}
+.p-seg{
+  height:5px;flex:1;border-radius:3px;
+  background:var(--border);transition:background .4s;
+}
+.p-seg.done{background:var(--green);}
+.p-seg.active{background:var(--purple);}
+.p-label{font-size:11px;color:var(--muted);font-family:var(--mono);white-space:nowrap;}
+
+/* ── INFO BOX ────────────────────────────── */
+.info{
+  background:var(--blue-lt);border:1.5px solid #BFDBFE;
+  border-radius:12px;padding:13px 16px;
+  font-size:13px;line-height:1.6;color:#1e40af;
+  margin:12px 0;display:flex;gap:10px;align-items:flex-start;
+}
+.info-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+
+/* ── TERM TOOLTIP ────────────────────────── */
+.term{
+  display:inline;
+  border-bottom:1.5px dashed rgba(59,130,246,.5);
+  cursor:help;
+  position:relative;
+  color:inherit;
+}
+.term-popup{
+  display:none;
+  position:absolute;
+  bottom:calc(100% + 8px);
+  left:50%;transform:translateX(-50%);
+  background:var(--navy);color:#fff;
+  font-size:12px;font-weight:500;
+  padding:9px 13px;border-radius:10px;
+  white-space:nowrap;z-index:50;
+  line-height:1.5;
+  box-shadow:0 4px 16px rgba(0,0,0,.2);
+  pointer-events:none;
+  max-width:260px;
+  white-space:normal;
+  text-align:left;
+}
+.term-popup::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-top-color:var(--navy);
+}
+.term:hover .term-popup{display:block;}
+
+/* ── ANNOTATION (пояснение к сообщению) ─── */
+.msg-annotation{
+  margin-top:10px;
+  background:#EFF6FF;
+  border:1px solid #BFDBFE;
+  border-radius:10px;
+  padding:10px 14px;
+  font-size:12px;
+  color:#1e40af;
+  line-height:1.6;
+  display:flex;gap:8px;align-items:flex-start;
+}
+.msg-annotation-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+
+/* ── ANDREY THOUGHT ──────────────────────── */
+.andrey-thought{
+  display:flex;gap:14px;align-items:flex-start;
+  margin-bottom:24px;
+}
+.andrey-thought-avatar{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--navy);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  font-size:22px;
+}
+.andrey-thought-body{flex:1;}
+.andrey-thought-name{
+  font-size:10px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;
+}
+.andrey-thought-bubble{
+  background:var(--purple-lt);
+  border:1.5px solid var(--purple);
+  border-radius:4px 14px 14px 14px;
+  padding:13px 16px;
+  font-size:13.5px;line-height:1.65;
+  color:var(--navy2);
+  position:relative;
+}
+.andrey-thought-bubble::before{
+  content:'💭';
+  position:absolute;top:-10px;left:-6px;
+  font-size:18px;
+}
+.andrey-thought-steps{
+  display:flex;flex-direction:column;gap:6px;margin-top:12px;
+}
+.andrey-step{
+  display:flex;align-items:flex-start;gap:10px;
+  background:#fff;border:1px solid var(--border);
+  border-radius:9px;padding:9px 12px;
+  font-size:13px;line-height:1.5;color:var(--navy2);
+}
+.andrey-step-num{
+  width:22px;height:22px;border-radius:6px;
+  background:var(--navy);color:#fff;
+  font-size:11px;font-weight:800;font-family:var(--mono);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.andrey-step.done .andrey-step-num{background:var(--green);}
+.andrey-step-text{flex:1;}
+.andrey-step-text strong{color:var(--navy);font-weight:700;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="badge"><div class="badge-dot"></div>Кейс из практики · Глава 3</div>
+  <h1>Клиент спрашивает<br>про лицензию <em>Consul</em></h1>
+  <p class="intro">Реальная ситуация: клиент прочитал новость об изменении лицензии и обеспокоился. Разберёмся, что изменилось, применимо ли это к нам и как ответить.</p>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="p-seg active" id="ps0"></div>
+    <div class="p-seg" id="ps1"></div>
+    <div class="p-seg" id="ps2"></div>
+    <div class="p-seg" id="ps3"></div>
+    <span class="p-label" id="pLabel">Шаг 1 из 4</span>
+  </div>
+
+  <!-- CHAT -->
+  <div class="chat">
+    <div class="msg left">
+      <div class="msg-avatar" style="background:#DBEAFE;color:#1d4ed8">ЛБ</div>
+      <div class="msg-body">
+        <div class="msg-name">Клиент · Любимый банк</div>
+        <div class="msg-bubble">
+          Привет! Любимый банк пришёл с вопросом по нашей архитектуре.<br><br>
+          <strong>Consul agent</strong> — проверьте политику лицензирования. Если делаете
+          <span class="term">discovery<div class="term-popup">Service Discovery — механизм автоматического обнаружения сервисов в распределённой системе. Consul умеет отслеживать, какие сервисы запущены, где они находятся и доступны ли они. HashiCorp продаёт это как самостоятельный продукт.</div></span>
+          — необходимо заменить. Consul изменил политику лицензирования.
+        </div>
+        <div class="msg-time">сегодня, 11:34</div>
+        <div class="msg-annotation">
+          <span class="msg-annotation-icon">💬</span>
+          <div>
+            <strong>Что беспокоит клиента:</strong> Consul — инструмент, который мы используем внутри нашей платформы. Клиент прочитал, что HashiCorp изменила лицензию, и опасается, что наше использование Consul для service discovery теперь нарушает условия. По новой лицензии BSL 1.1 — запрещено строить конкурирующий продукт на базе Consul.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANDREY THOUGHT -->
+  <div class="andrey-thought">
+    <div class="andrey-thought-avatar">🧑‍💻</div>
+    <div class="andrey-thought-body">
+      <div class="andrey-thought-name">Андрей думает</div>
+      <div class="andrey-thought-bubble">
+        Так, сначала разберусь с термином. Discovery — это когда один сервис ищет и обнаруживает другие. Consul у нас это делает, но <em>только внутри нашего продукта</em> — не как отдельная функция для клиентов. Мы не продаём discovery как сервис. Значит, мы, скорее всего, не конкуренты HashiCorp.<br><br>
+        Но лицензию всё равно нужно проверить — прежде чем отвечать.
+      </div>
+      <div class="andrey-thought-steps">
+        <div class="andrey-step done">
+          <div class="andrey-step-num">✓</div>
+          <div class="andrey-step-text"><strong>Понял суть вопроса:</strong> клиент опасается нарушения новой лицензии BSL 1.1</div>
+        </div>
+        <div class="andrey-step done">
+          <div class="andrey-step-num">✓</div>
+          <div class="andrey-step-text"><strong>Первая гипотеза:</strong> мы не делаем discovery как продукт — используем Consul только внутри платформы</div>
+        </div>
+        <div class="andrey-step">
+          <div class="andrey-step-num">→</div>
+          <div class="andrey-step-text"><strong>Нужно проверить:</strong> что именно изменилось в лицензии и применимо ли это к нам</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 1 — ЧТО ИЗМЕНИЛОСЬ -->
+  <div class="step-card active open" id="step1">
+    <div class="step-head" onclick="toggleStep('step1')">
+      <div class="step-num">1</div>
+      <div class="step-title">Что именно изменилось в лицензии Consul?</div>
+      <div class="step-arrow">↓</div>
+    </div>
+    <div class="step-body">
+      <p style="font-size:13.5px;color:var(--navy2);line-height:1.65;margin-bottom:12px;">
+        HashiCorp — компания-разработчик Consul — в 2023 году сменила лицензию. Это не слух, это факт, который нужно понять, прежде чем отвечать клиенту.
+      </p>
+
+      <div class="lic-grid">
+        <div class="lic-card old">
+          <div class="lic-label"><span>✅</span> Было</div>
+          <div class="lic-name">MPL v2.0</div>
+          <div class="lic-rule"><span class="lic-icon">•</span>Mozilla Public License</div>
+          <div class="lic-rule"><span class="lic-icon">•</span>Свободная лицензия</div>
+          <div class="lic-rule"><span class="lic-icon">•</span>Коммерческое использование разрешено</div>
+          <div class="lic-rule"><span class="lic-icon">•</span>Нет ограничений по конкуренции</div>
+        </div>
+        <div class="lic-card new">
+          <div class="lic-label"><span>⚠️</span> Стало</div>
+          <div class="lic-name">BSL 1.1</div>
+          <div class="lic-rule"><span class="lic-icon">•</span>Business Source License</div>
+          <div class="lic-rule"><span class="lic-icon">•</span>Коммерческая лицензия</div>
+          <div class="lic-rule"><span class="lic-icon">•</span>Запрет на конкурентное использование</div>
+          <div class="lic-rule"><span class="lic-icon">•</span>Внутреннее использование — разрешено</div>
+        </div>
+      </div>
+
+      <div class="key-q">
+        <div class="key-q-icon">🔑</div>
+        <div>
+          <div class="key-q-text">Ключевое ограничение BSL 1.1</div>
+          <div class="key-q-sub">Нельзя использовать Consul для создания продукта или сервиса, который конкурирует с HashiCorp. Всё остальное — внутреннее использование, встраивание в свой продукт для клиентов — разрешено.</div>
+        </div>
+      </div>
+
+      <div class="choices" id="q1-choices">
+        <div class="choice-label" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:4px;">Проверь себя: что запрещает BSL 1.1?</div>
+        <button class="choice" onclick="answer('q1','A',false)">
+          <div class="choice-letter">A</div>
+          Использовать Consul внутри своей компании для работы собственных сервисов
+        </button>
+        <button class="choice" onclick="answer('q1','B',true)">
+          <div class="choice-letter">B</div>
+          Строить продукт, который конкурирует с HashiCorp, используя Consul как основу
+        </button>
+        <button class="choice" onclick="answer('q1','C',false)">
+          <div class="choice-letter">C</div>
+          Встраивать Consul в коммерческий продукт для своих клиентов
+        </button>
+      </div>
+      <div class="feedback" id="q1-fb-good">
+        <div class="fb-title">✅ Верно</div>
+        BSL 1.1 запрещает конкурентное использование — строить продукт, который делает то же самое, что HashiCorp, и конкурирует с ним на рынке. Внутреннее использование и встраивание в собственный продукт — не запрещено.
+      </div>
+      <div class="feedback bad" id="q1-fb-bad">
+        <div class="fb-title">❌ Не совсем</div>
+        BSL 1.1 запрещает именно конкурентное использование. Если ваш продукт не конкурирует с HashiCorp — ограничение не применяется.
+      </div>
+
+      <button class="next-step-btn" id="next1" onclick="openStep('step2','ps1',1)">
+        Дальше → Применимо ли это к нам?
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2 — ПРИМЕНИМО ЛИ К НАМ -->
+  <div class="step-card" id="step2">
+    <div class="step-head" onclick="toggleStep('step2')">
+      <div class="step-num">2</div>
+      <div class="step-title">Применимо ли ограничение к Naumen?</div>
+      <div class="step-arrow">↓</div>
+    </div>
+    <div class="step-body">
+      <p style="font-size:13.5px;color:var(--navy2);line-height:1.65;margin-bottom:14px;">
+        BSL 1.1 содержит одно ключевое условие запрета. Проверим, выполняется ли оно в нашем случае.
+      </p>
+
+      <div class="criteria-list" id="criteria-list">
+        <div class="criterion" id="cr1">
+          <div class="criterion-icon">🔍</div>
+          <div class="criterion-text">
+            <strong>HashiCorp делает:</strong> Service Discovery, Service Mesh, управление конфигурациями как самостоятельный продукт на рынке
+          </div>
+        </div>
+        <div class="criterion" id="cr2">
+          <div class="criterion-icon">🔍</div>
+          <div class="criterion-text">
+            <strong>Мы делаем:</strong> IT Service Management — управление ИТ-сервисами, ITSM-платформа для предприятий
+          </div>
+        </div>
+        <div class="criterion" id="cr3">
+          <div class="criterion-icon">🔍</div>
+          <div class="criterion-text">
+            <strong>Consul у нас:</strong> используется внутри нашей платформы как инструмент для discovery наших собственных компонентов
+          </div>
+        </div>
+        <div class="criterion" id="cr4">
+          <div class="criterion-icon">🔍</div>
+          <div class="criterion-text">
+            <strong>Мы продаём клиентам:</strong> ITSM-функциональность, а не инструмент Service Discovery как таковой
+          </div>
+        </div>
+      </div>
+
+      <div class="choices" id="q2-choices">
+        <div class="choice-label" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:4px;">Применяется ли к нам ограничение BSL 1.1?</div>
+        <button class="choice" onclick="answer('q2','A',false)">
+          <div class="choice-letter">A</div>
+          Да — мы используем Consul в коммерческом продукте, значит ограничение применяется
+        </button>
+        <button class="choice" onclick="answer('q2','B',true)">
+          <div class="choice-letter">B</div>
+          Нет — мы не конкурируем с HashiCorp, наш продукт делает другое
+        </button>
+        <button class="choice" onclick="answer('q2','C',false)">
+          <div class="choice-letter">C</div>
+          Неизвестно — нужно купить коммерческую лицензию на всякий случай
+        </button>
+      </div>
+      <div class="feedback" id="q2-fb-good"></div>
+      <div class="feedback bad" id="q2-fb-bad"></div>
+
+      <button class="next-step-btn" id="next2" onclick="revealCriteria()">
+        Показать разбор по критериям →
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 3 — КАК ОТВЕТИТЬ КЛИЕНТУ -->
+  <div class="step-card" id="step3">
+    <div class="step-head" onclick="toggleStep('step3')">
+      <div class="step-num">3</div>
+      <div class="step-title">Как ответить клиенту?</div>
+      <div class="step-arrow">↓</div>
+    </div>
+    <div class="step-body">
+      <p style="font-size:13.5px;color:var(--navy2);line-height:1.65;margin-bottom:14px;">
+        Клиент обеспокоен. Он прочитал про BSL 1.1 и считает, что мы нарушаем лицензию. Нужно ответить чётко и аргументированно.
+      </p>
+
+      <div class="choices" id="q3-choices">
+        <div class="choice-label" style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:4px;">Какой ответ правильный?</div>
+        <button class="choice" onclick="answer('q3','A',false)">
+          <div class="choice-letter">A</div>
+          «Вы правы, мы разберёмся и заменим Consul на другое решение»
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">Согласиться и пообещать замену</div>
+        </button>
+        <button class="choice" onclick="answer('q3','B',false)">
+          <div class="choice-letter">B</div>
+          «Мы не юристы, обратитесь к специалистам по лицензированию»
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">Переадресовать вопрос</div>
+        </button>
+        <button class="choice" onclick="answer('q3','C',true)">
+          <div class="choice-letter">C</div>
+          «К нам неприменимо — мы не конкурируем с продуктами HashiCorp»
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">Объяснить позицию с аргументом</div>
+        </button>
+        <button class="choice" onclick="answer('q3','D',false)">
+          <div class="choice-letter">D</div>
+          «Мы купим коммерческую лицензию HashiCorp»
+          <div style="font-size:12px;color:var(--muted);margin-top:4px;">Перестраховаться</div>
+        </button>
+      </div>
+      <div class="feedback" id="q3-fb-good"></div>
+      <div class="feedback bad" id="q3-fb-bad"></div>
+
+      <button class="next-step-btn" id="next3" onclick="openStep('step4','ps3',3)">
+        Дальше → Финальный ответ клиенту
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 4 — ФИНАЛЬНЫЙ ОТВЕТ -->
+  <div class="step-card" id="step4">
+    <div class="step-head" onclick="toggleStep('step4')">
+      <div class="step-num">4</div>
+      <div class="step-title">Финальный ответ клиенту</div>
+      <div class="step-arrow">↓</div>
+    </div>
+    <div class="step-body">
+
+      <div class="chat" style="margin-bottom:0">
+        <div class="msg left">
+          <div class="msg-avatar" style="background:#DBEAFE;color:#1d4ed8">ЛБ</div>
+          <div class="msg-body">
+            <div class="msg-name">Клиент · Любимый банк</div>
+            <div class="msg-bubble">
+              Consul изменил политику лицензирования — вы не можете использовать его для discovery в коммерческом продукте.
+            </div>
+            <div class="msg-time">11:34</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin:16px 0;">
+        <button class="reveal-btn" onclick="revealAnswer()">
+          💬 Показать наш ответ →
+        </button>
+        <div class="reveal-content" id="reveal-answer">
+          <div class="chat">
+            <div class="msg right">
+              <div class="msg-avatar" style="background:var(--orange-lt);color:var(--orange)">N</div>
+              <div class="msg-body">
+                <div class="msg-name">Naumen</div>
+                <div class="msg-bubble">
+                  Мы проверили ситуацию с лицензией Consul.<br><br>
+                  Ограничение BSL 1.1 касается компаний, которые <strong style="color:rgba(255,255,255,.95)">конкурируют с HashiCorp</strong> — то есть создают и продают инструменты Service Discovery, Service Mesh или управления конфигурациями.<br><br>
+                  Naumen — ITSM-платформа. Мы используем Consul <strong style="color:rgba(255,255,255,.95)">внутри нашего продукта</strong> как инструмент для обнаружения собственных компонентов, а не как самостоятельный сервис для клиентов. Мы не конкурируем с продуктами HashiCorp.<br><br>
+                  Ограничение к нам неприменимо.
+                </div>
+                <div class="msg-time" style="text-align:right">11:52</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info">
+            <div class="info-icon">📎</div>
+            <div>
+              <strong>Почему этот ответ правильный:</strong> BSL 1.1 содержит чёткий критерий — конкуренция с продуктами правообладателя. Мы этому критерию не соответствуем. Аргумент конкретный, проверяемый и не требует дополнительных расходов на лицензию.
+            </div>
+          </div>
+
+          <div class="info" style="background:var(--amber-lt);border-color:#FED7AA;color:#78350f;">
+            <div class="info-icon">⚠️</div>
+            <div>
+              <strong>Когда позиция изменилась бы:</strong> если бы Naumen продавал клиентам Service Discovery как отдельную функцию — «подключите наш агент для обнаружения сервисов» — это уже конкуренция с HashiCorp. В таком случае нужна коммерческая лицензия или замена.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RESULT BANNER -->
+  <div class="result-banner" id="resultBanner">
+    <div class="rb-title">🎯 Разбор завершён</div>
+    <div class="rb-text">
+      Это типичная ситуация: клиент читает новость про смену лицензии, пугается и задаёт вопрос. Правильный алгоритм — не паниковать и не соглашаться сразу, а разобраться в сути ограничения и проверить, применимо ли оно к вашей ситуации.
+    </div>
+    <div class="rb-rule">
+      // Главное правило при работе с лицензиями<br>
+      if (мы_конкурируем_с_правообладателем) → нужна_лицензия_или_замена<br>
+      else → ограничение_неприменимо
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── STATE ─────────────────────────────────
+const answered = {};
+let stepsCompleted = 0;
+
+// ── TOGGLE STEP ───────────────────────────
+function toggleStep(id){
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+  el.classList.toggle('active', el.classList.contains('open'));
+}
+
+// ── OPEN NEXT STEP ────────────────────────
+function openStep(stepId, segId, segIdx){
+  // mark current seg done
+  const segs = ['ps0','ps1','ps2','ps3'];
+  segs.forEach((s,i)=>{
+    const el = document.getElementById(s);
+    if(i < segIdx) el.className='p-seg done';
+    else if(i === segIdx) el.className='p-seg active';
+    else el.className='p-seg';
+  });
+  document.getElementById('pLabel').textContent = `Шаг ${segIdx+1} из 4`;
+
+  const next = document.getElementById(stepId);
+  next.classList.add('open','active');
+  setTimeout(()=>{
+    next.scrollIntoView({behavior:'smooth',block:'start'});
+  },150);
+}
+
+// ── ANSWER ────────────────────────────────
+function answer(qid, letter, correct){
+  if(answered[qid]) return;
+  answered[qid] = {letter, correct};
+
+  const choices = document.querySelectorAll(`#${qid}-choices .choice`);
+  choices.forEach(btn=>{
+    const l = btn.getAttribute('onclick').match(/'([A-D])'/)[1];
+    if(l === letter) btn.classList.add(correct?'correct':'wrong');
+    else btn.classList.add('dim');
+  });
+
+  if(correct){
+    handleCorrect(qid);
+  } else {
+    const fb = document.getElementById(`${qid}-fb-bad`);
+    fb.classList.add('show');
+    fillBadFeedback(qid, letter);
+    // allow retry after 1.5s
+    setTimeout(()=>{
+      choices.forEach(btn=>{
+        const l = btn.getAttribute('onclick').match(/'([A-D])'/)[1];
+        if(l !== letter){
+          btn.classList.remove('dim');
+          btn.style.pointerEvents='';
+        }
+      });
+    },1500);
+    delete answered[qid];
+  }
+}
+
+function handleCorrect(qid){
+  stepsCompleted++;
+
+  if(qid==='q1'){
+    const fb = document.getElementById('q1-fb-good');
+    fb.classList.add('good','show');
+    setTimeout(()=>{
+      document.getElementById('next1').classList.add('show');
+    },400);
+  }
+
+  if(qid==='q2'){
+    const fb = document.getElementById('q2-fb-good');
+    fb.innerHTML = `<div class="fb-title">✅ Верно</div>
+      Ограничение BSL 1.1 направлено против конкурентов HashiCorp. Naumen — ITSM-платформа, не конкурент HashiCorp. Consul используется внутренне, а не как продаваемый инструмент Service Discovery.`;
+    fb.classList.add('good','show');
+    setTimeout(()=>{
+      document.getElementById('next2').classList.add('show');
+    },400);
+  }
+
+  if(qid==='q3'){
+    const fb = document.getElementById('q3-fb-good');
+    fb.innerHTML = `<div class="fb-title">✅ Правильный ответ</div>
+      Именно так: чётко, с аргументом. Не уходим от ответа, не соглашаемся без анализа, не тратим деньги на ненужную лицензию. Объясняем, почему ограничение к нам не относится.`;
+    fb.classList.add('good','show');
+    setTimeout(()=>{
+      document.getElementById('next3').classList.add('show');
+      // mark step done
+      document.getElementById('step1').classList.add('done');
+      document.getElementById('step1').classList.remove('active');
+      document.getElementById('step2').classList.add('done');
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step3').classList.add('done');
+      document.getElementById('step3').classList.remove('active');
+    },400);
+  }
+}
+
+function fillBadFeedback(qid, letter){
+  const msgs = {
+    q1:{
+      A:'Нет — внутреннее использование Consul прямо разрешено BSL 1.1. Под запретом только конкурентное использование.',
+      C:'Нет — встраивание инструмента в свой продукт для клиентов само по себе не запрещено. Запрещено конкурировать с HashiCorp.'
+    },
+    q2:{
+      A:'Само по себе коммерческое использование не запрещено. BSL 1.1 запрещает конкурентное использование — создание продукта, который конкурирует с HashiCorp.',
+      C:'Покупать лицензию без необходимости — лишние расходы. Сначала нужно понять, применяется ли ограничение вообще.'
+    },
+    q3:{
+      A:'Соглашаться без анализа — неправильно. Это признание несуществующей проблемы и ненужные расходы на замену.',
+      B:'Уходить от ответа тоже неправильно. У нас есть позиция — и она аргументированная.',
+      D:'Покупать лицензию при отсутствии нарушения — лишние расходы без оснований.'
+    }
+  };
+  const fb = document.getElementById(`${qid}-fb-bad`);
+  fb.innerHTML = `<div class="fb-title">❌ Не совсем</div>${msgs[qid]?.[letter]||'Попробуй ещё раз.'}`;
+}
+
+// ── REVEAL CRITERIA ───────────────────────
+function revealCriteria(){
+  const items = [
+    {id:'cr1', yes:false, verdict:'НЕ МЫ',   text:'<strong>HashiCorp делает:</strong> Service Discovery как самостоятельный продукт'},
+    {id:'cr2', yes:false, verdict:'НЕ ОНИ',  text:'<strong>Мы делаем:</strong> ITSM — управление ИТ-сервисами. Разные рынки.'},
+    {id:'cr3', yes:false, verdict:'РАЗРЕШЕНО',text:'<strong>Consul у нас:</strong> внутренний инструмент, не продаётся клиентам отдельно'},
+    {id:'cr4', yes:false, verdict:'НЕТ',      text:'<strong>Мы продаём:</strong> ITSM-функциональность, а не Discovery-инструмент'},
+  ];
+
+  items.forEach((item, i)=>{
+    setTimeout(()=>{
+      const el = document.getElementById(item.id);
+      el.classList.add('no');
+      el.innerHTML = `
+        <div class="criterion-icon">✅</div>
+        <div class="criterion-text">${item.text}</div>
+        <div class="criterion-verdict">${item.verdict}</div>
+      `;
+    }, i * 200);
+  });
+
+  setTimeout(()=>{
+    document.getElementById('next2').textContent='Дальше → Как ответить клиенту?';
+    document.getElementById('next2').onclick = ()=>openStep('step3','ps2',2);
+
+    // Update progress
+    document.getElementById('ps1').className='p-seg done';
+    document.getElementById('ps2').className='p-seg active';
+    document.getElementById('pLabel').textContent='Шаг 3 из 4';
+
+    document.getElementById('step2').classList.add('done');
+    document.getElementById('step2').classList.remove('active');
+  }, items.length * 200 + 300);
+}
+
+// ── REVEAL ANSWER ─────────────────────────
+function revealAnswer(){
+  document.getElementById('reveal-answer').classList.add('show');
+  document.getElementById('step4').classList.add('done');
+  document.getElementById('step4').classList.remove('active');
+
+  // final progress
+  document.getElementById('ps3').className='p-seg done';
+  document.getElementById('pLabel').textContent='Завершено ✓';
+
+  setTimeout(()=>{
+    document.getElementById('resultBanner').classList.add('show');
+    document.getElementById('resultBanner').scrollIntoView({behavior:'smooth',block:'nearest'});
+  },600);
+}
+</script>
+</body>
+</html>
