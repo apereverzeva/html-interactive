@@ -1,583 +1,941 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Служебное или личное?</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Служебное или личное?</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap');
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-:root {
-  --bg:         #DCDEE0;
-  --surface:    #FFFFFF;
-  --surface2:   #ECEEF0;
-  --navy:       #1C1A3A;
-  --navy2:      #2D2A52;
-  --orange:     #FF6611;
-  --orange-lt:  #FFF0E8;
-  --green:      #00A870;
-  --green-lt:   #E6F7F1;
-  --green-dk:   #005C3C;
-  --red:        #D93050;
-  --red-lt:     #FFF0F3;
-  --red-dk:     #7A0E22;
-  --amber:      #C97000;
-  --amber-lt:   #FFF4D6;
-  --amber-dk:   #7A4000;
-  --purple:     #6C5CE7;
-  --purple-lt:  #EDE9FF;
-  --muted:      #5A6070;
-  --border:     #C8CDD4;
-  --border2:    #B0B6BF;
-  --font:       'Onest', sans-serif;
-}
+    :root {
+      --bg: #DCDEE0;
+      --surface: #FFFFFF;
+      --surface2: #ECEEF0;
+      --navy: #1C1A3A;
+      --navy2: #2D2A52;
+      --orange: #FF6611;
+      --orange-lt: #FFF0E8;
+      --green: #00A870;
+      --green-lt: #E6F7F1;
+      --green-dk: #005C3C;
+      --red: #D93050;
+      --red-lt: #FFF0F3;
+      --red-dk: #7A0E22;
+      --amber: #C97000;
+      --amber-lt: #FFF4D6;
+      --amber-dk: #7A4000;
+      --purple: #6C5CE7;
+      --purple-lt: #EDE9FF;
+      --muted: #5A6070;
+      --border: #C8CDD4;
+      --border2: #B0B6BF;
+      --font: 'Onest', sans-serif;
+    }
 
-body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--navy);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  padding: 32px 16px 52px;
-}
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--navy);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px 52px;
+    }
 
-.wrap { width: 100%; max-width: 860px; }
+    .wrap {
+      width: 100%;
+      max-width: 860px;
+    }
 
-/* ── HEADER ──────────────────────────────── */
-.badge {
-  display: inline-flex; align-items: center; gap: 7px;
-  background: var(--navy); color: #fff;
-  font-size: 11px; font-weight: 700; letter-spacing: .6px;
-  text-transform: uppercase; padding: 4px 13px;
-  border-radius: 20px; margin-bottom: 16px;
-}
-.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+    /* ── HEADER ──────────────────────────────── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--navy);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      padding: 4px 13px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
 
-h1 { font-size: clamp(20px, 3.5vw, 28px); font-weight: 800; line-height: 1.2; margin-bottom: 8px; }
-h1 em { font-style: normal; color: var(--orange); }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--orange);
+    }
 
-.intro {
-  font-size: 14px; color: var(--muted); line-height: 1.7;
-  margin-bottom: 24px; max-width: 600px;
-}
+    h1 {
+      font-size: clamp(20px, 3.5vw, 28px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
 
-/* ── PROGRESS ────────────────────────────── */
-.prog-wrap {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 24px;
-}
-.prog-dots { display: flex; gap: 6px; }
-.prog-dot {
-  width: 10px; height: 10px; border-radius: 50%;
-  border: 2px solid var(--border2); background: var(--surface);
-  transition: all .3s cubic-bezier(.34,1.56,.64,1);
-}
-.prog-dot.placed  { background: var(--orange); border-color: var(--orange); }
-.prog-dot.correct { background: var(--green);  border-color: var(--green);  transform: scale(1.2); }
-.prog-dot.wrong   { background: var(--red);    border-color: var(--red); }
-.prog-dot.partial { background: var(--amber);  border-color: var(--amber); }
-.prog-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+    h1 em {
+      font-style: normal;
+      color: var(--orange);
+    }
 
-/* ── COLUMNS ─────────────────────────────── */
-.columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 24px;
-}
+    .intro {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      max-width: 600px;
+    }
 
-.col {
-  background: var(--surface);
-  border: 2px solid var(--border);
-  border-radius: 16px;
-  padding: 16px;
-  min-height: 260px;
-  transition: border-color .2s, box-shadow .2s, transform .15s;
-  position: relative;
-}
-.col.drag-over { transform: scale(1.02); box-shadow: 0 0 0 3px rgba(108,92,231,.15); }
-.col.col-work  { border-top: 4px solid var(--red); }
-.col.col-check { border-top: 4px solid var(--amber); }
-.col.col-self  { border-top: 4px solid var(--green); }
-.col.col-work.drag-over  { border-color: var(--red);   box-shadow: 0 0 0 3px rgba(217,48,80,.12); }
-.col.col-check.drag-over { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(201,112,0,.12); }
-.col.col-self.drag-over  { border-color: var(--green); box-shadow: 0 0 0 3px rgba(0,168,112,.12); }
+    /* ── PROGRESS ────────────────────────────── */
+    .prog-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
 
-.col-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
-.col-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-.col-work  .col-icon { background: var(--red-lt); }
-.col-check .col-icon { background: var(--amber-lt); }
-.col-self  .col-icon { background: var(--green-lt); }
-.col-title { font-size: 13px; font-weight: 700; }
-.col-work  .col-title { color: var(--red-dk); }
-.col-check .col-title { color: var(--amber-dk); }
-.col-self  .col-title { color: var(--green-dk); }
-.col-sub { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.4; }
+    .prog-dots {
+      display: flex;
+      gap: 6px;
+    }
 
-.drop-zone {
-  display: flex; flex-direction: column; gap: 7px;
-  min-height: 120px; position: relative;
-}
-.drop-zone::before {
-  content: 'Перетащи сюда';
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; color: var(--border); font-weight: 600;
-  pointer-events: none; transition: opacity .2s;
-}
-.drop-zone.has-items::before { opacity: 0; }
+    .prog-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--border2);
+      background: var(--surface);
+      transition: all .3s cubic-bezier(.34, 1.56, .64, 1);
+    }
 
-/* ── CARDS ───────────────────────────────── */
-.card {
-  background: var(--surface2);
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 13px;
-  font-size: 13px; font-weight: 500;
-  color: var(--navy);
-  cursor: grab;
-  display: flex; align-items: flex-start; gap: 9px;
-  user-select: none;
-  transition: transform .18s, box-shadow .18s, border-color .18s, background .18s;
-  position: relative; line-height: 1.45;
-}
-.card:hover { border-color: var(--navy2); background: #fff; box-shadow: 0 4px 14px rgba(0,0,0,.08); transform: translateY(-2px); }
-.card:active { cursor: grabbing; }
-.card.dragging { opacity: .4; transform: scale(.97); }
-.card-emoji { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-.card-drag  { margin-left: auto; color: var(--border); font-size: 13px; flex-shrink: 0; transition: color .15s; }
-.card:hover .card-drag { color: var(--border2); }
+    .prog-dot.placed {
+      background: var(--orange);
+      border-color: var(--orange);
+    }
 
-/* after check */
-.card.correct { background: var(--green-lt); border-color: var(--green); cursor: default; pointer-events: none; color: var(--green-dk); }
-.card.wrong   { background: var(--red-lt);   border-color: var(--red);   cursor: default; animation: shake .35s ease; color: var(--red-dk); }
-.card.partial { background: var(--amber-lt); border-color: #F0B020; cursor: default; color: var(--amber-dk); }
-.card.correct::after { content: '✓'; margin-left: auto; font-weight: 800; color: var(--green); font-size: 14px; }
-.card.wrong::after   { content: '✗'; margin-left: auto; font-weight: 800; color: var(--red);   font-size: 14px; }
-.card.partial::after { content: '~'; margin-left: auto; font-weight: 800; color: var(--amber); font-size: 14px; }
-.card.correct .card-drag, .card.wrong .card-drag, .card.partial .card-drag { display: none; }
+    .prog-dot.correct {
+      background: var(--green);
+      border-color: var(--green);
+      transform: scale(1.2);
+    }
 
-@keyframes shake {
-  0%,100% { transform: translateX(0); }
-  25%      { transform: translateX(-5px); }
-  75%      { transform: translateX(5px); }
-}
+    .prog-dot.wrong {
+      background: var(--red);
+      border-color: var(--red);
+    }
 
-/* ── BANK ────────────────────────────────── */
-.bank-label {
-  font-size: 11px; font-weight: 700; color: var(--muted);
-  text-transform: uppercase; letter-spacing: .6px;
-  text-align: center; margin-bottom: 12px;
-}
-.bank {
-  background: var(--surface);
-  border: 2px dashed var(--border);
-  border-radius: 16px;
-  padding: 18px;
-  display: flex; flex-wrap: wrap; gap: 9px;
-  justify-content: center;
-  min-height: 70px;
-  transition: border-color .2s, background .2s;
-}
-.bank.drag-over { border-color: var(--purple); background: var(--purple-lt); }
+    .prog-dot.partial {
+      background: var(--amber);
+      border-color: var(--amber);
+    }
 
-/* ── ACTIONS ─────────────────────────────── */
-.actions {
-  display: flex; gap: 10px; justify-content: center;
-  margin-top: 20px; flex-wrap: wrap;
-}
-.btn-check {
-  background: var(--navy); color: #fff; border: none;
-  border-radius: 11px; padding: 13px 28px;
-  font-family: var(--font); font-size: 14px; font-weight: 700;
-  cursor: pointer; transition: all .15s;
-}
-.btn-check:hover { background: var(--navy2); transform: translateY(-2px); }
-.btn-check:disabled { opacity: .4; cursor: not-allowed; transform: none; }
-.btn-reset {
-  background: var(--surface); color: var(--muted);
-  border: 1.5px solid var(--border); border-radius: 11px;
-  padding: 13px 24px;
-  font-family: var(--font); font-size: 14px; font-weight: 600;
-  cursor: pointer; transition: all .15s;
-}
-.btn-reset:hover { border-color: var(--orange); color: var(--orange); }
+    .prog-label {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
 
-/* ── FEEDBACK ────────────────────────────── */
-.feedback {
-  display: none; border-radius: 14px; padding: 18px 22px;
-  margin-top: 18px; animation: fadeUp .3s ease;
-}
-.feedback.show { display: block; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-.feedback.all-correct { background: var(--green-lt); border: 1.5px solid var(--green); }
-.feedback.has-errors  { background: var(--amber-lt); border: 1.5px solid #F0B020; }
-.fb-title { font-size: 16px; font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-.feedback.all-correct .fb-title { color: var(--green-dk); }
-.feedback.has-errors  .fb-title { color: var(--amber-dk); }
-.fb-text { font-size: 13.5px; line-height: 1.65; }
-.feedback.all-correct .fb-text { color: #1A5A40; }
-.feedback.has-errors  .fb-text { color: var(--amber-dk); }
-.fb-rule {
-  margin-top: 12px; padding: 10px 14px; border-radius: 9px;
-  font-size: 12.5px; line-height: 1.55; background: rgba(255,255,255,.6);
-}
-.feedback.all-correct .fb-rule { color: var(--green-dk); }
-.feedback.has-errors  .fb-rule { color: var(--amber-dk); }
+    /* ── COLUMNS ─────────────────────────────── */
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
 
-/* ── TOOLTIP ─────────────────────────────── */
-.tooltip-box {
-  position: fixed; background: var(--navy); color: #fff;
-  font-size: 12px; padding: 7px 12px; border-radius: 8px;
-  pointer-events: none; z-index: 999; max-width: 220px;
-  line-height: 1.5; opacity: 0; transition: opacity .15s;
-  font-family: var(--font);
-}
-.tooltip-box.show { opacity: 1; }
+    .col {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 260px;
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+      position: relative;
+    }
 
-/* ── RESPONSIVE ─────────────────────────── */
-@media (max-width: 640px) {
-  .columns { grid-template-columns: 1fr; }
-  .col { min-height: 100px; }
-}
-</style>
+    .col.drag-over {
+      transform: scale(1.02);
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, .15);
+    }
+
+    .col.col-work {
+      border-top: 4px solid var(--red);
+    }
+
+    .col.col-check {
+      border-top: 4px solid var(--amber);
+    }
+
+    .col.col-self {
+      border-top: 4px solid var(--green);
+    }
+
+    .col.col-work.drag-over {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(217, 48, 80, .12);
+    }
+
+    .col.col-check.drag-over {
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(201, 112, 0, .12);
+    }
+
+    .col.col-self.drag-over {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0, 168, 112, .12);
+    }
+
+    .col-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .col-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .col-work .col-icon {
+      background: var(--red-lt);
+    }
+
+    .col-check .col-icon {
+      background: var(--amber-lt);
+    }
+
+    .col-self .col-icon {
+      background: var(--green-lt);
+    }
+
+    .col-title {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .col-work .col-title {
+      color: var(--red-dk);
+    }
+
+    .col-check .col-title {
+      color: var(--amber-dk);
+    }
+
+    .col-self .col-title {
+      color: var(--green-dk);
+    }
+
+    .col-sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .drop-zone {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      min-height: 120px;
+      position: relative;
+    }
+
+    .drop-zone::before {
+      content: 'Перетащи сюда';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--border);
+      font-weight: 600;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+
+    .drop-zone.has-items::before {
+      opacity: 0;
+    }
+
+    /* ── CARDS ───────────────────────────────── */
+    .card {
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 13px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--navy);
+      cursor: grab;
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      user-select: none;
+      transition: transform .18s, box-shadow .18s, border-color .18s, background .18s;
+      position: relative;
+      line-height: 1.45;
+    }
+
+    .card:hover {
+      border-color: var(--navy2);
+      background: #fff;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .08);
+      transform: translateY(-2px);
+    }
+
+    .card:active {
+      cursor: grabbing;
+    }
+
+    .card.dragging {
+      opacity: .4;
+      transform: scale(.97);
+    }
+
+    .card-emoji {
+      font-size: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .card-drag {
+      margin-left: auto;
+      color: var(--border);
+      font-size: 13px;
+      flex-shrink: 0;
+      transition: color .15s;
+    }
+
+    .card:hover .card-drag {
+      color: var(--border2);
+    }
+
+    /* after check */
+    .card.correct {
+      background: var(--green-lt);
+      border-color: var(--green);
+      cursor: default;
+      pointer-events: none;
+      color: var(--green-dk);
+    }
+
+    .card.wrong {
+      background: var(--red-lt);
+      border-color: var(--red);
+      cursor: default;
+      animation: shake .35s ease;
+      color: var(--red-dk);
+    }
+
+    .card.partial {
+      background: var(--amber-lt);
+      border-color: #F0B020;
+      cursor: default;
+      color: var(--amber-dk);
+    }
+
+    .card.correct::after {
+      content: '✓';
+      margin-left: auto;
+      font-weight: 800;
+      color: var(--green);
+      font-size: 14px;
+    }
+
+    .card.wrong::after {
+      content: '✗';
+      margin-left: auto;
+      font-weight: 800;
+      color: var(--red);
+      font-size: 14px;
+    }
+
+    .card.partial::after {
+      content: '~';
+      margin-left: auto;
+      font-weight: 800;
+      color: var(--amber);
+      font-size: 14px;
+    }
+
+    .card.correct .card-drag,
+    .card.wrong .card-drag,
+    .card.partial .card-drag {
+      display: none;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-5px);
+      }
+
+      75% {
+        transform: translateX(5px);
+      }
+    }
+
+    /* ── BANK ────────────────────────────────── */
+    .bank-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .bank {
+      background: var(--surface);
+      border: 2px dashed var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      justify-content: center;
+      min-height: 70px;
+      transition: border-color .2s, background .2s;
+    }
+
+    .bank.drag-over {
+      border-color: var(--purple);
+      background: var(--purple-lt);
+    }
+
+    /* ── ACTIONS ─────────────────────────────── */
+    .actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-check {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 11px;
+      padding: 13px 28px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .btn-check:hover {
+      background: var(--navy2);
+      transform: translateY(-2px);
+    }
+
+    .btn-check:disabled {
+      opacity: .4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-reset {
+      background: var(--surface);
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      border-radius: 11px;
+      padding: 13px 24px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s;
+    }
+
+    .btn-reset:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    /* ── FEEDBACK ────────────────────────────── */
+    .feedback {
+      display: none;
+      border-radius: 14px;
+      padding: 18px 22px;
+      margin-top: 18px;
+      animation: fadeUp .3s ease;
+    }
+
+    .feedback.show {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .feedback.all-correct {
+      background: var(--green-lt);
+      border: 1.5px solid var(--green);
+    }
+
+    .feedback.has-errors {
+      background: var(--amber-lt);
+      border: 1.5px solid #F0B020;
+    }
+
+    .fb-title {
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feedback.all-correct .fb-title {
+      color: var(--green-dk);
+    }
+
+    .feedback.has-errors .fb-title {
+      color: var(--amber-dk);
+    }
+
+    .fb-text {
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+
+    .feedback.all-correct .fb-text {
+      color: #1A5A40;
+    }
+
+    .feedback.has-errors .fb-text {
+      color: var(--amber-dk);
+    }
+
+    .fb-rule {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      line-height: 1.55;
+      background: rgba(255, 255, 255, .6);
+    }
+
+    .feedback.all-correct .fb-rule {
+      color: var(--green-dk);
+    }
+
+    .feedback.has-errors .fb-rule {
+      color: var(--amber-dk);
+    }
+
+    /* ── TOOLTIP ─────────────────────────────── */
+    .tooltip-box {
+      position: fixed;
+      background: var(--navy);
+      color: #fff;
+      font-size: 12px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      pointer-events: none;
+      z-index: 999;
+      max-width: 220px;
+      line-height: 1.5;
+      opacity: 0;
+      transition: opacity .15s;
+      font-family: var(--font);
+    }
+
+    .tooltip-box.show {
+      opacity: 1;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────── */
+    @media (max-width: 640px) {
+      .columns {
+        grid-template-columns: 1fr;
+      }
+
+      .col {
+        min-height: 100px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="wrap">
+  <div class="wrap">
 
-  <!-- HEADER -->
-  <div class="badge"><div class="badge-dot"></div>Интерактивное задание · Глава 2</div>
-  <h1>Служебное или <em>личное</em>?</h1>
-  <p class="intro">Андрей попал в несколько ситуаций за рабочую неделю. Перетащи каждую карточку в нужный столбик — определи, к какой категории относится результат его работы.</p>
+    <!-- HEADER -->
+    <div class="badge">
+      <div class="badge-dot"></div>Интерактивное задание · Глава 2
+    </div>
+    <h1>Служебное или <em>личное</em>?</h1>
+    <p class="intro">Андрей попал в несколько ситуаций за рабочую неделю. Перетащи каждую карточку в нужный столбик —
+      определи, к какой категории относится результат его работы.</p>
 
-  <!-- PROGRESS -->
-  <div class="prog-wrap">
-    <div class="prog-dots" id="progDots"></div>
-    <div class="prog-label" id="progLabel">Распределено: 0 из 7</div>
-  </div>
-
-  <!-- COLUMNS -->
-  <div class="columns">
-
-    <div class="col col-work" data-col="work"
-         ondragover="onDragOver(event,this)" ondragleave="onDragLeave(this)" ondrop="onDrop(event,this)">
-      <div class="col-header">
-        <div class="col-icon">🏢</div>
-        <div>
-          <div class="col-title">Служебное произведение</div>
-          <div class="col-sub">Право у компании</div>
-        </div>
-      </div>
-      <div class="drop-zone" id="zone-work"></div>
+    <!-- PROGRESS -->
+    <div class="prog-wrap">
+      <div class="prog-dots" id="progDots"></div>
+      <div class="prog-label" id="progLabel">Распределено: 0 из 7</div>
     </div>
 
-    <div class="col col-check" data-col="check"
-         ondragover="onDragOver(event,this)" ondragleave="onDragLeave(this)" ondrop="onDrop(event,this)">
-      <div class="col-header">
-        <div class="col-icon">🔍</div>
-        <div>
-          <div class="col-title">Нужно разобраться</div>
-          <div class="col-sub">Зависит от деталей</div>
+    <!-- COLUMNS -->
+    <div class="columns">
+
+      <div class="col col-work" data-col="work" ondragover="onDragOver(event,this)" ondragleave="onDragLeave(this)"
+        ondrop="onDrop(event,this)">
+        <div class="col-header">
+          <div class="col-icon">🏢</div>
+          <div>
+            <div class="col-title">Служебное произведение</div>
+            <div class="col-sub">Исключительное право у компании</div>
+          </div>
         </div>
+        <div class="drop-zone" id="zone-work"></div>
       </div>
-      <div class="drop-zone" id="zone-check"></div>
+
+      <div class="col col-check" data-col="check" ondragover="onDragOver(event,this)" ondragleave="onDragLeave(this)"
+        ondrop="onDrop(event,this)">
+        <div class="col-header">
+          <div class="col-icon">🔍</div>
+          <div>
+            <div class="col-title">Нужно разобраться</div>
+            <div class="col-sub">Зависит от деталей</div>
+          </div>
+        </div>
+        <div class="drop-zone" id="zone-check"></div>
+      </div>
+
+      <div class="col col-self" data-col="self" ondragover="onDragOver(event,this)" ondragleave="onDragLeave(this)"
+        ondrop="onDrop(event,this)">
+        <div class="col-header">
+          <div class="col-icon">👤</div>
+          <div>
+            <div class="col-title">Личное</div>
+            <div class="col-sub">Исключительное право у Андрея</div>
+          </div>
+        </div>
+        <div class="drop-zone" id="zone-self"></div>
+      </div>
+
     </div>
 
-    <div class="col col-self" data-col="self"
-         ondragover="onDragOver(event,this)" ondragleave="onDragLeave(this)" ondrop="onDrop(event,this)">
-      <div class="col-header">
-        <div class="col-icon">👤</div>
-        <div>
-          <div class="col-title">Личное</div>
-          <div class="col-sub">Право у Андрея</div>
-        </div>
-      </div>
-      <div class="drop-zone" id="zone-self"></div>
+    <!-- BANK -->
+    <div class="bank-label">↑ Перетащи карточки в нужный столбик ↑</div>
+    <div class="bank" id="bank" ondragover="onDragOver(event,this)" ondragleave="onDragLeave(this)"
+      ondrop="onDrop(event,this)">
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+      <button class="btn-check" id="checkBtn" onclick="checkAnswers()" disabled>✦ Проверить</button>
+      <button class="btn-reset" onclick="resetAll()">↺ Начать задание заново</button>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div class="feedback" id="feedback">
+      <div class="fb-title" id="fbTitle"></div>
+      <div class="fb-text" id="fbText"></div>
+      <div class="fb-rule" id="fbRule"></div>
     </div>
 
   </div>
 
-  <!-- BANK -->
-  <div class="bank-label">↑ Перетащи карточки в нужный столбик ↑</div>
-  <div class="bank" id="bank"
-       ondragover="onDragOver(event,this)" ondragleave="onDragLeave(this)" ondrop="onDrop(event,this)">
-  </div>
+  <div class="tooltip-box" id="tooltip"></div>
 
-  <!-- ACTIONS -->
-  <div class="actions">
-    <button class="btn-check" id="checkBtn" onclick="checkAnswers()" disabled>✦ Проверить</button>
-    <button class="btn-reset" onclick="resetAll()">↺ Начать заново</button>
-  </div>
+  <script>
+    // ── DATA ──────────────────────────────────────────────────────
+    // correct: 'work' | 'check' | 'self'
+    const ITEMS = [
+      {
+        id: 'i1', emoji: '📋',
+        text: 'Модуль аналитики по задаче из Jira в рабочее время',
+        correct: 'work',
+        tip: 'Рабочая задача + рабочее время = классическое служебное произведение'
+      },
+      {
+        id: 'i2', emoji: '🏠',
+        text: 'Pet-проект трекера привычек — полностью вне работы, своими инструментами',
+        correct: 'self',
+        tip: 'Нет связи с компанией, нет её ресурсов — исключительное право у Андрея'
+      },
+      {
+        id: 'i3', emoji: '🔧',
+        text: 'Скрипт для автоматизации внутреннего процесса компании',
+        correct: 'work',
+        tip: 'Создан для нужд компании — служебное, даже если выглядит как мелочь'
+      },
+      {
+        id: 'i4', emoji: '🌙',
+        text: 'Рабочий фрагмент кода, доработанный вечером дома для той же задачи',
+        correct: 'check',
+        tip: 'Та же рабочая задача — скорее служебное. Но важно: использовались ли корпоративные ресурсы и доступы?'
+      },
+      {
+        id: 'i5', emoji: '📐',
+        text: 'Архитектурная схема для клиентского проекта компании',
+        correct: 'work',
+        tip: 'Создана для клиента компании в рамках работы — однозначно служебное'
+      },
+      {
+        id: 'i7', emoji: '💡',
+        text: 'Идея нового продукта, которую Андрей придумал в отпуске и нигде не зафиксировал',
+        correct: 'self',
+        tip: 'Незафиксированная идея — не охраняемый объект вообще. Но и компании она не принадлежит'
+      },
+      {
+        id: 'i8', emoji: '🎨',
+        text: 'UI-макет для рабочего продукта, созданный в корпоративном Figma',
+        correct: 'work',
+        tip: 'Рабочая задача + корпоративный инструмент + корпоративное хранилище = служебное'
+      },
+    ];
 
-  <!-- FEEDBACK -->
-  <div class="feedback" id="feedback">
-    <div class="fb-title" id="fbTitle"></div>
-    <div class="fb-text" id="fbText"></div>
-    <div class="fb-rule" id="fbRule"></div>
-  </div>
+    // ── STATE ─────────────────────────────────────────────────────
+    let placements = {};
+    let dragId = null;
+    let isChecked = false;
 
-</div>
+    function init() {
+      ITEMS.forEach(item => {placements[item.id] = 'bank';});
+      isChecked = false;
+      renderAll();
+      updateProgress();
+      document.getElementById('checkBtn').disabled = true;
+      const fb = document.getElementById('feedback');
+      fb.className = 'feedback';
+    }
 
-<div class="tooltip-box" id="tooltip"></div>
+    // ── RENDER ────────────────────────────────────────────────────
+    function renderAll() {
+      const bank = document.getElementById('bank');
+      const zoneWork = document.getElementById('zone-work');
+      const zoneCheck = document.getElementById('zone-check');
+      const zoneSelf = document.getElementById('zone-self');
 
-<script>
-// ── DATA ──────────────────────────────────────────────────────
-// correct: 'work' | 'check' | 'self'
-const ITEMS = [
-  {
-    id:'i1', emoji:'📋',
-    text:'Модуль аналитики по задаче из Jira в рабочее время',
-    correct:'work',
-    tip:'Рабочая задача + рабочее время = классическое служебное произведение'
-  },
-  {
-    id:'i2', emoji:'🏠',
-    text:'Pet-проект трекера привычек — полностью вне работы, своими инструментами',
-    correct:'self',
-    tip:'Нет связи с компанией, нет её ресурсов — право у Андрея'
-  },
-  {
-    id:'i3', emoji:'🔧',
-    text:'Скрипт для автоматизации внутреннего процесса компании',
-    correct:'work',
-    tip:'Создан для нужд компании — служебное, даже если выглядит как мелочь'
-  },
-  {
-    id:'i4', emoji:'🌙',
-    text:'Рабочий фрагмент кода, доработанный вечером дома для той же задачи',
-    correct:'check',
-    tip:'Та же рабочая задача — скорее служебное. Но важно: использовались ли корпоративные ресурсы и доступы?'
-  },
-  {
-    id:'i5', emoji:'📐',
-    text:'Архитектурная схема для клиентского проекта компании',
-    correct:'work',
-    tip:'Создана для клиента компании в рамках работы — однозначно служебное'
-  },
-  {
-    id:'i7', emoji:'💡',
-    text:'Идея нового продукта, которую Андрей придумал в отпуске и нигде не зафиксировал',
-    correct:'self',
-    tip:'Незафиксированная идея — не охраняемый объект вообще. Но и компании она не принадлежит'
-  },
-  {
-    id:'i8', emoji:'🎨',
-    text:'UI-макет для рабочего продукта, созданный в корпоративном Figma',
-    correct:'work',
-    tip:'Рабочая задача + корпоративный инструмент + корпоративное хранилище = служебное'
-  },
-];
+      [bank, zoneWork, zoneCheck, zoneSelf].forEach(z => z.innerHTML = '');
 
-// ── STATE ─────────────────────────────────────────────────────
-let placements = {};
-let dragId     = null;
-let isChecked  = false;
+      ITEMS.forEach(item => {
+        const el = buildCard(item);
+        if (placements[item.id] === 'bank') bank.appendChild(el);
+        else if (placements[item.id] === 'work') zoneWork.appendChild(el);
+        else if (placements[item.id] === 'check') zoneCheck.appendChild(el);
+        else if (placements[item.id] === 'self') zoneSelf.appendChild(el);
+      });
 
-function init() {
-  ITEMS.forEach(item => { placements[item.id] = 'bank'; });
-  isChecked = false;
-  renderAll();
-  updateProgress();
-  document.getElementById('checkBtn').disabled = true;
-  const fb = document.getElementById('feedback');
-  fb.className = 'feedback';
-}
+      zoneWork.classList.toggle('has-items', zoneWork.children.length > 0);
+      zoneCheck.classList.toggle('has-items', zoneCheck.children.length > 0);
+      zoneSelf.classList.toggle('has-items', zoneSelf.children.length > 0);
+    }
 
-// ── RENDER ────────────────────────────────────────────────────
-function renderAll() {
-  const bank      = document.getElementById('bank');
-  const zoneWork  = document.getElementById('zone-work');
-  const zoneCheck = document.getElementById('zone-check');
-  const zoneSelf  = document.getElementById('zone-self');
+    function buildCard(item) {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.id = 'card-' + item.id;
+      div.draggable = !isChecked;
+      div.dataset.id = item.id;
+      div.innerHTML = `<span class="card-emoji">${item.emoji}</span><span>${item.text}</span><span class="card-drag">⠿</span>`;
 
-  [bank, zoneWork, zoneCheck, zoneSelf].forEach(z => z.innerHTML = '');
+      div.addEventListener('dragstart', e => {
+        if (isChecked) return;
+        dragId = item.id;
+        div.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', item.id);
+      });
+      div.addEventListener('dragend', () => {
+        dragId = null;
+        div.classList.remove('dragging');
+      });
 
-  ITEMS.forEach(item => {
-    const el = buildCard(item);
-    if      (placements[item.id] === 'bank')  bank.appendChild(el);
-    else if (placements[item.id] === 'work')  zoneWork.appendChild(el);
-    else if (placements[item.id] === 'check') zoneCheck.appendChild(el);
-    else if (placements[item.id] === 'self')  zoneSelf.appendChild(el);
-  });
+      // Touch
+      div.addEventListener('touchstart', onTouchStart, {passive: true});
+      div.addEventListener('touchmove', onTouchMove, {passive: false});
+      div.addEventListener('touchend', onTouchEnd);
 
-  zoneWork.classList.toggle('has-items',  zoneWork.children.length  > 0);
-  zoneCheck.classList.toggle('has-items', zoneCheck.children.length > 0);
-  zoneSelf.classList.toggle('has-items',  zoneSelf.children.length  > 0);
-}
+      // Tooltip
+      div.addEventListener('mouseenter', e => showTip(item.tip, e));
+      div.addEventListener('mousemove', e => moveTip(e));
+      div.addEventListener('mouseleave', hideTip);
 
-function buildCard(item) {
-  const div = document.createElement('div');
-  div.className = 'card';
-  div.id = 'card-' + item.id;
-  div.draggable = !isChecked;
-  div.dataset.id = item.id;
-  div.innerHTML = `<span class="card-emoji">${item.emoji}</span><span>${item.text}</span><span class="card-drag">⠿</span>`;
+      return div;
+    }
 
-  div.addEventListener('dragstart', e => {
-    if (isChecked) return;
-    dragId = item.id;
-    div.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', item.id);
-  });
-  div.addEventListener('dragend', () => {
-    dragId = null;
-    div.classList.remove('dragging');
-  });
+    // ── DRAG ──────────────────────────────────────────────────────
+    function onDragOver(e, el) {
+      if (isChecked) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      el.classList.add('drag-over');
+    }
+    function onDragLeave(el) {el.classList.remove('drag-over');}
+    function onDrop(e, el) {
+      e.preventDefault();
+      el.classList.remove('drag-over');
+      if (isChecked) return;
+      const id = e.dataTransfer.getData('text/plain') || dragId;
+      if (!id) return;
+      placements[id] = el.dataset.col || 'bank';
+      renderAll();
+      updateProgress();
+    }
 
-  // Touch
-  div.addEventListener('touchstart', onTouchStart, { passive: true });
-  div.addEventListener('touchmove',  onTouchMove,  { passive: false });
-  div.addEventListener('touchend',   onTouchEnd);
+    // ── TOUCH DND ─────────────────────────────────────────────────
+    let touchCard = null, touchClone = null, touchOffX = 0, touchOffY = 0;
 
-  // Tooltip
-  div.addEventListener('mouseenter', e => showTip(item.tip, e));
-  div.addEventListener('mousemove',  e => moveTip(e));
-  div.addEventListener('mouseleave', hideTip);
+    function onTouchStart(e) {
+      if (isChecked) return;
+      const card = e.currentTarget;
+      const touch = e.touches[0];
+      const rect = card.getBoundingClientRect();
+      touchCard = card;
+      touchOffX = touch.clientX - rect.left;
+      touchOffY = touch.clientY - rect.top;
+      dragId = card.dataset.id;
 
-  return div;
-}
-
-// ── DRAG ──────────────────────────────────────────────────────
-function onDragOver(e, el) {
-  if (isChecked) return;
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  el.classList.add('drag-over');
-}
-function onDragLeave(el) { el.classList.remove('drag-over'); }
-function onDrop(e, el) {
-  e.preventDefault();
-  el.classList.remove('drag-over');
-  if (isChecked) return;
-  const id = e.dataTransfer.getData('text/plain') || dragId;
-  if (!id) return;
-  placements[id] = el.dataset.col || 'bank';
-  renderAll();
-  updateProgress();
-}
-
-// ── TOUCH DND ─────────────────────────────────────────────────
-let touchCard = null, touchClone = null, touchOffX = 0, touchOffY = 0;
-
-function onTouchStart(e) {
-  if (isChecked) return;
-  const card  = e.currentTarget;
-  const touch = e.touches[0];
-  const rect  = card.getBoundingClientRect();
-  touchCard   = card;
-  touchOffX   = touch.clientX - rect.left;
-  touchOffY   = touch.clientY - rect.top;
-  dragId      = card.dataset.id;
-
-  touchClone = card.cloneNode(true);
-  touchClone.style.cssText = `position:fixed;width:${rect.width}px;opacity:.85;pointer-events:none;
+      touchClone = card.cloneNode(true);
+      touchClone.style.cssText = `position:fixed;width:${rect.width}px;opacity:.85;pointer-events:none;
     z-index:9999;transform:scale(1.04) rotate(1.5deg);
     box-shadow:0 8px 28px rgba(0,0,0,.18);border-color:var(--purple);transition:none;`;
-  document.body.appendChild(touchClone);
-  posTouchClone(touch);
-  card.classList.add('dragging');
-}
-function onTouchMove(e) { if (!touchClone) return; e.preventDefault(); posTouchClone(e.touches[0]); }
-function posTouchClone(t) {
-  touchClone.style.left = (t.clientX - touchOffX) + 'px';
-  touchClone.style.top  = (t.clientY - touchOffY) + 'px';
-}
-function onTouchEnd(e) {
-  if (!touchClone) return;
-  const touch = e.changedTouches[0];
-  const el    = document.elementFromPoint(touch.clientX, touch.clientY);
-  const col   = el ? el.closest('[data-col]') : null;
-  const bank  = document.getElementById('bank');
-  const inBank= el ? (el === bank || bank.contains(el)) : false;
-
-  if (col && col.dataset.col) placements[dragId] = col.dataset.col;
-  else if (inBank)            placements[dragId] = 'bank';
-
-  touchClone.remove(); touchClone = null;
-  touchCard.classList.remove('dragging'); touchCard = null;
-  dragId = null;
-  renderAll(); updateProgress();
-}
-
-// ── PROGRESS ──────────────────────────────────────────────────
-function updateProgress() {
-  const total  = ITEMS.length;
-  const placed = ITEMS.filter(i => placements[i.id] !== 'bank').length;
-
-  // dots
-  const dotsEl = document.getElementById('progDots');
-  dotsEl.innerHTML = '';
-  ITEMS.forEach((item, idx) => {
-    const dot = document.createElement('div');
-    dot.className = 'prog-dot';
-    if (isChecked) {
-      const p = placements[item.id];
-      if (p === item.correct)  dot.classList.add('correct');
-      else if (p === 'bank')   dot.classList.add('wrong');
-      else                     dot.classList.add('wrong');
-    } else {
-      if (placements[item.id] !== 'bank') dot.classList.add('placed');
+      document.body.appendChild(touchClone);
+      posTouchClone(touch);
+      card.classList.add('dragging');
     }
-    dotsEl.appendChild(dot);
-  });
-
-  document.getElementById('progLabel').textContent = `Распределено: ${placed} из ${total}`;
-  document.getElementById('checkBtn').disabled = (placed < total);
-}
-
-// ── CHECK ─────────────────────────────────────────────────────
-function checkAnswers() {
-  if (isChecked) return;
-  isChecked = true;
-
-  let correct = 0;
-  ITEMS.forEach(item => {
-    const card = document.getElementById('card-' + item.id);
-    if (!card) return;
-    if (placements[item.id] === item.correct) {
-      card.classList.add('correct');
-      correct++;
-    } else {
-      card.classList.add('wrong');
+    function onTouchMove(e) {if (!touchClone) return; e.preventDefault(); posTouchClone(e.touches[0]);}
+    function posTouchClone(t) {
+      touchClone.style.left = (t.clientX - touchOffX) + 'px';
+      touchClone.style.top = (t.clientY - touchOffY) + 'px';
     }
-  });
+    function onTouchEnd(e) {
+      if (!touchClone) return;
+      const touch = e.changedTouches[0];
+      const el = document.elementFromPoint(touch.clientX, touch.clientY);
+      const col = el ? el.closest('[data-col]') : null;
+      const bank = document.getElementById('bank');
+      const inBank = el ? (el === bank || bank.contains(el)) : false;
 
-  // update dots
-  updateProgress();
+      if (col && col.dataset.col) placements[dragId] = col.dataset.col;
+      else if (inBank) placements[dragId] = 'bank';
 
-  const total = ITEMS.length;
-  const fb    = document.getElementById('feedback');
-  const pct   = correct / total;
+      touchClone.remove(); touchClone = null;
+      touchCard.classList.remove('dragging'); touchCard = null;
+      dragId = null;
+      renderAll(); updateProgress();
+    }
 
-  if (pct === 1) {
-    fb.className = 'feedback show all-correct';
-    document.getElementById('fbTitle').textContent = '🎉 Все верно!';
-    document.getElementById('fbText').textContent  = 'Ты правильно определил каждую ситуацию. Главный ориентир: если результат создан по рабочей задаче с использованием ресурсов компании — это служебное произведение, право у работодателя.';
-  } else {
-    fb.className = 'feedback show has-errors';
-    document.getElementById('fbTitle').textContent = `⚠ ${correct} из ${total} верно`;
-    document.getElementById('fbText').textContent  = 'Карточки с ошибками отмечены красным. Ключевые признаки служебного произведения: рабочая задача, корпоративные ресурсы (репозиторий, инфраструктура, данные), связь с продуктом или клиентом компании. «Нужно разобраться» — случаи, где детали определяют категорию.';
-  }
-  document.getElementById('fbRule').textContent = '📎 Ст. 1295 ГК РФ — авторские права на служебное произведение принадлежат автору, исключительное право — работодателю.';
-  document.getElementById('checkBtn').disabled = true;
-}
+    // ── PROGRESS ──────────────────────────────────────────────────
+    function updateProgress() {
+      const total = ITEMS.length;
+      const placed = ITEMS.filter(i => placements[i.id] !== 'bank').length;
 
-// ── RESET ─────────────────────────────────────────────────────
-function resetAll() { init(); }
+      // dots
+      const dotsEl = document.getElementById('progDots');
+      dotsEl.innerHTML = '';
+      ITEMS.forEach((item, idx) => {
+        const dot = document.createElement('div');
+        dot.className = 'prog-dot';
+        if (isChecked) {
+          const p = placements[item.id];
+          if (p === item.correct) dot.classList.add('correct');
+          else if (p === 'bank') dot.classList.add('wrong');
+          else dot.classList.add('wrong');
+        } else {
+          if (placements[item.id] !== 'bank') dot.classList.add('placed');
+        }
+        dotsEl.appendChild(dot);
+      });
 
-// ── TOOLTIP ───────────────────────────────────────────────────
-const tooltip = document.getElementById('tooltip');
-function showTip(text, e) { tooltip.textContent = text; moveTip(e); tooltip.classList.add('show'); }
-function moveTip(e) { tooltip.style.left = (e.clientX + 14) + 'px'; tooltip.style.top = (e.clientY - 10) + 'px'; }
-function hideTip() { tooltip.classList.remove('show'); }
+      document.getElementById('progLabel').textContent = `Распределено: ${placed} из ${total}`;
+      document.getElementById('checkBtn').disabled = (placed < total);
+    }
 
-// ── INIT ──────────────────────────────────────────────────────
-init();
-</script>
+    // ── CHECK ─────────────────────────────────────────────────────
+    function checkAnswers() {
+      if (isChecked) return;
+      isChecked = true;
+
+      let correct = 0;
+      ITEMS.forEach(item => {
+        const card = document.getElementById('card-' + item.id);
+        if (!card) return;
+        if (placements[item.id] === item.correct) {
+          card.classList.add('correct');
+          correct++;
+        } else {
+          card.classList.add('wrong');
+        }
+      });
+
+      // update dots
+      updateProgress();
+
+      const total = ITEMS.length;
+      const fb = document.getElementById('feedback');
+      const pct = correct / total;
+
+      if (pct === 1) {
+        fb.className = 'feedback show all-correct';
+        document.getElementById('fbTitle').textContent = '🎉 Все верно!';
+        document.getElementById('fbText').textContent = 'Ты правильно определил каждую ситуацию. Главный ориентир: если результат создан по рабочей задаче с использованием ресурсов компании — это служебное произведение, право у работодателя.';
+      } else {
+        fb.className = 'feedback show has-errors';
+        document.getElementById('fbTitle').textContent = `⚠ ${correct} из ${total} верно`;
+        document.getElementById('fbText').textContent = 'Карточки с ошибками отмечены красным. Ключевые признаки служебного произведения: рабочая задача, корпоративные ресурсы (репозиторий, инфраструктура, данные), связь с продуктом или клиентом компании. «Нужно разобраться» — случаи, где детали определяют категорию.';
+      }
+      document.getElementById('fbRule').textContent = '📎 Ст. 1295 ГК РФ — авторские права на служебное произведение принадлежат автору, исключительное право — работодателю.';
+      document.getElementById('checkBtn').disabled = true;
+    }
+
+    // ── RESET ─────────────────────────────────────────────────────
+    function resetAll() {init();}
+
+    // ── TOOLTIP ───────────────────────────────────────────────────
+    const tooltip = document.getElementById('tooltip');
+    function showTip(text, e) {tooltip.textContent = text; moveTip(e); tooltip.classList.add('show');}
+    function moveTip(e) {tooltip.style.left = (e.clientX + 14) + 'px'; tooltip.style.top = (e.clientY - 10) + 'px';}
+    function hideTip() {tooltip.classList.remove('show');}
+
+    // ── INIT ──────────────────────────────────────────────────────
+    init();
+  </script>
 </body>
+
 </html>

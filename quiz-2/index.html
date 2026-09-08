@@ -560,7 +560,8 @@
     <div class="header">
       <div class="header-badge"><span>🧩</span> Интерактивное задание</div>
       <h1>Идея или <em>объект ИС</em>?</h1>
-      <p>Перетащите каждую карточку в нужный столбик — определите, что является объектом интеллектуальной собственности, а
+      <p>Перетащите каждую карточку в нужный столбик — определите, что является объектом интеллектуальной собственности,
+        а
         что пока просто идея</p>
     </div>
 
@@ -611,7 +612,7 @@
         ✦ Проверить ответы
       </button>
       <button class="btn btn-secondary" onclick="resetAll()">
-        ↺ Начать заново
+        ↺ Начать задание заново
       </button>
     </div>
 
@@ -675,7 +676,7 @@
     // ── INIT ──────────────────────────────────────────────────────
     function init() {
       placements = {};
-      ITEMS.forEach(item => { placements[item.id] = 'bank'; });
+      ITEMS.forEach(item => {placements[item.id] = 'bank';});
       renderAll();
       updateProgress();
       document.getElementById('checkBtn').disabled = true;
@@ -731,8 +732,8 @@
       });
 
       // Touch support
-      div.addEventListener('touchstart', onTouchStart, { passive: true });
-      div.addEventListener('touchmove', onTouchMove, { passive: false });
+      div.addEventListener('touchstart', onTouchStart, {passive: true});
+      div.addEventListener('touchmove', onTouchMove, {passive: false});
       div.addEventListener('touchend', onTouchEnd);
 
       // Tooltip
@@ -750,7 +751,7 @@
       e.dataTransfer.dropEffect = 'move';
       el.classList.add('drag-over');
     }
-    function onDragLeave(el) { el.classList.remove('drag-over'); }
+    function onDragLeave(el) {el.classList.remove('drag-over');}
 
     function onDrop(e, el) {
       e.preventDefault();
@@ -877,7 +878,7 @@
     }
 
     // ── RESET ─────────────────────────────────────────────────────
-    function resetAll() { init(); }
+    function resetAll() {init();}
 
     // ── TOOLTIP ───────────────────────────────────────────────────
     const tooltip = document.getElementById('tooltip');
@@ -890,7 +891,7 @@
       tooltip.style.left = (e.clientX + 14) + 'px';
       tooltip.style.top = (e.clientY - 10) + 'px';
     }
-    function hideTooltip() { tooltip.classList.remove('visible'); }
+    function hideTooltip() {tooltip.classList.remove('visible');}
 
     // ── START ─────────────────────────────────────────────────────
     init();
