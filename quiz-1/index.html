@@ -364,29 +364,29 @@ h1 em{font-style:normal;color:var(--orange);}
   filter:drop-shadow(0 4px 12px rgba(0,0,0,.1));
 }
 
-/* ── TOOLTIP ────────────────────────────── */
-.hs-tooltip{
+/* ── ENTITY NAME LABEL (on hover) ────────── */
+.hs-name-label{
   position:absolute;
-  bottom:calc(100% + 12px);left:50%;
-  transform:translateX(-50%);
-  background:var(--navy);color:#fff;
-  font-size:12px;font-weight:500;padding:8px 13px;
-  border-radius:9px;white-space:nowrap;
-  pointer-events:none;z-index:30;
+  top:-12px;left:14px;
+  display:flex;align-items:center;gap:6px;
+  background:var(--navy);
+  color:#fff;
+  font-size:11px;
+  font-weight:700;
+  padding:5px 12px;
+  border-radius:8px;
   opacity:0;
-  transition:opacity .15s;
-  box-shadow:0 4px 16px rgba(0,0,0,.2);
-  line-height:1.4;
-  text-align:center;
-  max-width:200px;
-  white-space:normal;
+  transform:translateY(4px);
+  transition:opacity .18s, transform .18s;
+  pointer-events:none;
+  z-index:16;
+  letter-spacing:.1px;
+  white-space:nowrap;
+  box-shadow:0 4px 14px rgba(28,26,58,.22);
 }
-.hs-tooltip::after{
-  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
-  border:6px solid transparent;border-top-color:var(--navy);
-}
-.hs:hover .hs-tooltip:not(.hide){opacity:1;}
-.hs.found .hs-tooltip{display:none;}
+.hs-name-label .nl-icon{font-size:12px;}
+.hs:hover .hs-name-label{opacity:1;transform:translateY(0);}
+.hs.found .hs-name-label{display:none;}
 
 /* ── TASK LABEL ─────────────────────────── */
 .task-label{
@@ -539,9 +539,9 @@ h1 em{font-style:normal;color:var(--orange);}
 
       <!-- 1. IDE -->
       <div class="hs ide" id="hs-ide" onclick="found('ide')" tabindex="0" role="button" aria-label="IDE с кодом">
+        <div class="hs-name-label"><span class="nl-icon">💻</span>IDE с кодом</div>
         <div class="found-badge">✓</div>
         <div class="pulse-ring"></div>
-        <div class="hs-tooltip">Нажми — это объект ИС?</div>
         <div class="hs-inner">
           <div class="app-titlebar">
             <div class="win-dots">
@@ -572,9 +572,9 @@ h1 em{font-style:normal;color:var(--orange);}
 
       <!-- 2. Figma -->
       <div class="hs figma" id="hs-figma" onclick="found('figma')" tabindex="0" role="button" aria-label="Figma макет интерфейса">
+        <div class="hs-name-label"><span class="nl-icon">🎨</span>Макет интерфейса</div>
         <div class="found-badge">✓</div>
         <div class="pulse-ring"></div>
-        <div class="hs-tooltip">Нажми — это объект ИС?</div>
         <div class="hs-inner">
           <div class="app-titlebar">
             <div class="win-dots">
@@ -612,9 +612,9 @@ h1 em{font-style:normal;color:var(--orange);}
 
       <!-- 3. TZ Document -->
       <div class="hs tzdoc" id="hs-tz" onclick="found('tz')" tabindex="0" role="button" aria-label="Техническое задание">
+        <div class="hs-name-label"><span class="nl-icon">📄</span>Техническое задание</div>
         <div class="found-badge">✓</div>
         <div class="pulse-ring"></div>
-        <div class="hs-tooltip">Нажми — это объект ИС?</div>
         <div class="hs-inner">
           <div class="app-titlebar">
             <div class="win-dots">
@@ -655,9 +655,9 @@ h1 em{font-style:normal;color:var(--orange);}
 
       <!-- 4. Architecture -->
       <div class="hs arch" id="hs-arch" onclick="found('arch')" tabindex="0" role="button" aria-label="Архитектурная схема">
+        <div class="hs-name-label"><span class="nl-icon">📐</span>Архитектурная схема</div>
         <div class="found-badge">✓</div>
         <div class="pulse-ring"></div>
-        <div class="hs-tooltip">Нажми — это объект ИС?</div>
         <div class="hs-inner">
           <div class="app-titlebar">
             <div class="win-dots">
@@ -698,9 +698,9 @@ h1 em{font-style:normal;color:var(--orange);}
 
       <!-- 5. Repository — full width -->
       <div class="hs repo" id="hs-repo" onclick="found('repo')" tabindex="0" role="button" aria-label="Репозиторий" style="grid-column:1/-1">
+        <div class="hs-name-label"><span class="nl-icon">📦</span>Репозиторий с кодом</div>
         <div class="found-badge">✓</div>
         <div class="pulse-ring"></div>
-        <div class="hs-tooltip">Нажми — это объект ИС?</div>
         <div class="hs-inner">
           <div class="app-titlebar">
             <div class="win-dots">
