@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Можно ли публиковать?</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #DCDEE0;
+  --surface:   #FFFFFF;
+  --surface2:  #ECEEF0;
+  --border:    #C4C7CB;
+  --border2:   #AEB2B7;
+  --text:      #1A1C1E;
+  --text2:     #2D3035;
+  --muted:     #545A63;
+  --orange:    #FF6611;
+  --orange-lt: rgba(255,102,17,.10);
+  --orange-glow: rgba(255,102,17,.20);
+  --green:     #00A870;
+  --green-lt:  rgba(0,168,112,.10);
+  --green-dark:#006644;
+  --red:       #D93050;
+  --red-lt:    rgba(217,48,80,.08);
+  --red-dark:  #8B0E26;
+  --amber:     #D97706;
+  --amber-lt:  rgba(217,119,6,.10);
+  --purple:    #5B4FCF;
+  --mono:      'JetBrains Mono', monospace;
+  --font:      'Onest', sans-serif;
+  --radius:    14px;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 36px 16px 56px;
+}
+
+.wrapper {
+  width: 100%;
+  max-width: 720px;
+  position: relative;
+}
+
+/* ── HEADER ───────────────────────────────── */
+.header { margin-bottom: 28px; }
+
+.scan-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--orange);
+  background: var(--orange-lt);
+  border: 1px solid rgba(255,102,17,.3);
+  border-radius: 6px;
+  padding: 5px 12px;
+  margin-bottom: 16px;
+  letter-spacing: .5px;
+}
+.scan-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--orange);
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .4; transform: scale(.7); }
+}
+
+.header h1 {
+  font-size: clamp(22px, 4vw, 30px);
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 10px;
+  letter-spacing: -.3px;
+}
+.header h1 .accent { color: var(--orange); }
+
+.header p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 500px;
+}
+
+/* ── SCENARIO SELECTOR ────────────────────── */
+.scenario-label {
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 10px;
+}
+.scenarios {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.sc-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 9px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .18s;
+}
+.sc-btn:hover {
+  border-color: var(--orange);
+  color: var(--text);
+  background: var(--orange-lt);
+}
+.sc-btn.active {
+  border-color: var(--orange);
+  background: var(--orange-lt);
+  color: var(--orange);
+  font-weight: 700;
+}
+.sc-btn .sc-icon { font-size: 16px; }
+
+/* ── CHECKLIST PANEL ─────────────────────── */
+.panel {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+
+.panel-title {
+  padding: 14px 22px;
+  border-bottom: 1.5px solid var(--border);
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--muted);
+  letter-spacing: .7px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface2);
+  text-transform: uppercase;
+}
+.panel-title-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border2);
+}
+
+/* ── CHECK ITEM ───────────────────────────── */
+.check-item {
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  cursor: pointer;
+  transition: background .15s;
+  position: relative;
+  overflow: hidden;
+}
+.check-item:last-child { border-bottom: none; }
+.check-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: background .2s;
+}
+.check-item:hover { background: #F0F1F3; }
+.check-item.checked { background: rgba(217,48,80,.04); }
+.check-item.checked::before { background: var(--red); }
+
+.check-box {
+  width: 24px; height: 24px;
+  border-radius: 7px;
+  border: 2px solid var(--border2);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  background: var(--surface2);
+}
+.check-item.checked .check-box {
+  background: var(--red);
+  border-color: var(--red);
+  box-shadow: 0 0 10px rgba(217,48,80,.25);
+}
+.check-tick {
+  opacity: 0;
+  transform: scale(.5);
+  transition: all .2s;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+.check-item.checked .check-tick { opacity: 1; transform: scale(1); }
+
+.check-body { flex: 1; }
+.check-text {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
+  transition: color .2s;
+  margin-bottom: 4px;
+}
+.check-item.checked .check-text { color: var(--red-dark); }
+
+.check-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.check-item.checked .check-sub { color: #8B3040; }
+
+.check-tag {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-family: var(--mono);
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 5px;
+  letter-spacing: .4px;
+  margin-top: 2px;
+  background: rgba(217,48,80,.10);
+  color: var(--red);
+  border: 1px solid rgba(217,48,80,.25);
+  opacity: 0;
+  transition: opacity .2s;
+}
+.check-item.checked .check-tag { opacity: 1; }
+
+/* ── RISK METER ──────────────────────────── */
+.meter-wrap {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 18px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.meter-label {
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .7px;
+}
+.meter-count {
+  font-size: 13px;
+  font-family: var(--mono);
+  color: var(--muted);
+  font-weight: 600;
+  transition: color .3s;
+}
+.meter-count.danger { color: var(--red); }
+
+.meter-bar-bg {
+  height: 10px;
+  background: var(--surface2);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 6px;
+  border: 1px solid var(--border);
+}
+.meter-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  width: 0%;
+  transition: width .45s cubic-bezier(.4,0,.2,1), background .45s;
+  background: var(--amber);
+}
+.meter-ticks {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1px;
+}
+.meter-tick {
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--border2);
+  font-weight: 600;
+}
+
+/* ── VERDICT ─────────────────────────────── */
+.verdict {
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
+  border: 1.5px solid var(--border);
+  transition: all .4s cubic-bezier(.4,0,.2,1);
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+
+.verdict.neutral {
+  border-color: var(--border);
+  background: var(--surface);
+}
+.verdict.safe {
+  border-color: rgba(0,168,112,.4);
+  background: linear-gradient(135deg, rgba(0,168,112,.06), var(--surface));
+}
+.verdict.danger {
+  border-color: rgba(217,48,80,.4);
+  background: linear-gradient(135deg, rgba(217,48,80,.06), var(--surface));
+  animation: danger-pulse 2.5s ease-in-out infinite;
+}
+@keyframes danger-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(217,48,80,0); }
+  50%      { box-shadow: 0 0 0 5px rgba(217,48,80,.08); }
+}
+
+.verdict-icon {
+  font-size: 34px;
+  margin-bottom: 10px;
+  display: block;
+}
+.verdict.danger .verdict-icon { animation: shake-icon .4s ease; }
+@keyframes shake-icon {
+  0%,100% { transform: translateX(0); }
+  25%      { transform: translateX(-4px); }
+  75%      { transform: translateX(4px); }
+}
+
+.verdict-title {
+  font-size: 19px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  letter-spacing: -.2px;
+}
+.verdict.neutral .verdict-title { color: var(--muted); }
+.verdict.safe    .verdict-title { color: var(--green-dark); }
+.verdict.danger  .verdict-title { color: var(--red-dark); }
+
+.verdict-text {
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.verdict.neutral .verdict-text { color: var(--muted); }
+.verdict.safe    .verdict-text { color: #145E3E; }
+.verdict.danger  .verdict-text { color: #7A1528; }
+
+.publication-rules {
+  background: var(--surface);
+  border: 1.5px solid var(--orange);
+  border-left: 4px solid var(--orange);
+  border-radius: 16px;
+  padding: 22px 24px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+.publication-rules h2 {
+  font-size: 18px;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+.publication-rules p {
+  color: var(--text2);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+.publication-rules p + p { margin-top: 12px; }
+.publication-rules p:last-child { color: var(--red-dark); }
+a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+a:hover { color: var(--orange); }
+
+@media (max-width: 480px) {
+  .check-item { padding: 16px; gap: 10px; flex-wrap: wrap; }
+  .check-body { min-width: 0; }
+  .check-tag { display: none; }
+  .panel-title { padding: 14px 16px; }
+  .meter-wrap, .verdict, .publication-rules { padding: 20px 16px; }
+}
+
+/* ── DETAILS EXPANDABLE ──────────────────── */
+.details-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 14px 22px;
+  border-top: 1px solid var(--border);
+  transition: color .15s;
+  text-align: left;
+}
+.details-toggle:hover { color: var(--text); }
+.details-toggle .arrow { font-size: 16px; transition: transform .25s; }
+.details-toggle.open .arrow { transform: rotate(180deg); }
+
+.details-body {
+  display: none;
+  padding: 4px 22px 20px;
+  border-top: 1px solid var(--border);
+  background: var(--surface2);
+}
+.details-body.open { display: block; }
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.detail-text { color: var(--muted); }
+.detail-text strong { color: var(--text); font-weight: 600; }
+
+/* ── COUNTER BADGE ───────────────────────── */
+.counter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
+  font-family: var(--mono);
+  background: rgba(217,48,80,.12);
+  color: var(--red);
+  border: 1px solid rgba(217,48,80,.3);
+  margin-left: 6px;
+  transition: all .3s;
+  vertical-align: middle;
+  opacity: 0;
+  transform: scale(.6);
+}
+.counter-badge.visible { opacity: 1; transform: scale(1); }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="scan-badge">
+      <div class="scan-dot"></div>
+      Интерактивный чек-лист · ИС в IT
+    </div>
+    <h1>Можно ли <span class="accent">публиковать</span>?</h1>
+    <p>Отметь всё, что относится к твоему материалу: документу, коду, статье, схеме или другому результату работы. Чек-лист подскажет ограничения и порядок согласования перед публикацией.</p>
+  </div>
+
+  <!-- CHECKLIST PANEL -->
+  <div class="panel">
+    <div class="panel-title">
+      <div class="panel-title-dot"></div>
+      ПРОВЕРКА ПЕРЕД ПУБЛИКАЦИЕЙ — отметь всё, что подходит
+      <span class="counter-badge" id="counterBadge">0</span>
+    </div>
+
+    <div class="check-item" onclick="toggle(this,'work')" data-id="work">
+      <div class="check-box"><span class="check-tick">✓</span></div>
+      <div class="check-body">
+        <div class="check-text">Это результат интеллектуального труда — кто-то это создал</div>
+        <div class="check-sub" id="sub-work">Код, текст, схема, макет, база данных, инструкция — всё, что создал человек, а не возникло само собой</div>
+      </div>
+      <div class="check-tag">РИД</div>
+    </div>
+
+    <div class="check-item" onclick="toggle(this,'fixed')" data-id="fixed">
+      <div class="check-box"><span class="check-tick">✓</span></div>
+      <div class="check-body">
+        <div class="check-text">Материал зафиксирован в конкретной форме</div>
+        <div class="check-sub" id="sub-fixed">Файл, документ, запись в репозитории — результат существует не только «в голове»</div>
+      </div>
+      <div class="check-tag">РИД</div>
+    </div>
+
+    <div class="check-item" onclick="toggle(this,'company')" data-id="company">
+      <div class="check-box"><span class="check-tick">✓</span></div>
+      <div class="check-body">
+        <div class="check-text">Создано в рамках рабочей задачи или с использованием ресурсов компании</div>
+        <div class="check-sub" id="sub-company">Рабочее время, корпоративный репозиторий, данные или инфраструктура компании, задача от руководителя</div>
+      </div>
+      <div class="check-tag">СЛУЖЕБНОЕ</div>
+    </div>
+
+    <div class="check-item" onclick="toggle(this,'product')" data-id="product">
+      <div class="check-box"><span class="check-tick">✓</span></div>
+      <div class="check-body">
+        <div class="check-text">Это часть продукта, модуля или системы компании</div>
+        <div class="check-sub" id="sub-product">Фрагмент кода, компонент, библиотека, модуль — даже небольшая часть охраняемого объекта</div>
+      </div>
+      <div class="check-tag">ЧАСТЬ ОИС</div>
+    </div>
+
+    <div class="check-item" onclick="toggle(this,'nopermit')" data-id="nopermit">
+      <div class="check-box"><span class="check-tick">✓</span></div>
+      <div class="check-body">
+        <div class="check-text">Нет явного разрешения на публикацию или передачу</div>
+        <div class="check-sub" id="sub-nopermit">Не получено согласование руководителя; вопросы интеллектуальной собственности не согласованы с <a href="mailto:zis@naumen.ru">отделом интеллектуальной собственности</a></div>
+      </div>
+      <div class="check-tag">НЕТ OK</div>
+    </div>
+
+    <div class="check-item" onclick="toggle(this,'confidential')" data-id="confidential">
+      <div class="check-box"><span class="check-tick">✓</span></div>
+      <div class="check-body">
+        <div class="check-text">Материал содержит конфиденциальную информацию</div>
+        <div class="check-sub">Например, закрытые сведения о компании, клиентах или проектах, пароли, ключи и токены доступа. Публикация строго запрещена политикой информационной безопасности Naumen</div>
+      </div>
+      <div class="check-tag">ЗАПРЕТ</div>
+    </div>
+
+    <div class="check-item" onclick="toggle(this,'personal')" data-id="personal">
+      <div class="check-box"><span class="check-tick">✓</span></div>
+      <div class="check-body">
+        <div class="check-text">Материал содержит персональные данные</div>
+        <div class="check-sub">Например, сведения о сотрудниках, клиентах или других людях, по которым можно определить человека. Публикация строго запрещена политикой информационной безопасности Naumen</div>
+      </div>
+      <div class="check-tag">ЗАПРЕТ</div>
+    </div>
+
+  </div>
+
+  <!-- RISK METER -->
+  <div class="meter-wrap">
+    <div class="meter-header">
+      <div class="meter-label">// Результат проверки</div>
+      <div class="meter-count" id="meterCount">0 из 7 пунктов</div>
+    </div>
+    <div class="meter-bar-bg">
+      <div class="meter-bar-fill" id="meterFill"></div>
+    </div>
+    <div class="meter-ticks">
+      <span class="meter-tick">ПРОВЕРЬ</span>
+      <span class="meter-tick">СОГЛАСУЙ</span>
+      <span class="meter-tick">СТОП</span>
+    </div>
+  </div>
+
+  <!-- VERDICT -->
+  <div class="verdict neutral" id="verdict">
+    <span class="verdict-icon" id="verdictIcon">🔍</span>
+    <div class="verdict-title" id="verdictTitle">Отметь признаки выше</div>
+    <div class="verdict-text" id="verdictText">Проверь каждый пункт. Персональные данные и конфиденциальную информацию публиковать строго запрещено. Перед любой публикацией требуется согласование руководителя.</div>
+  </div>
+
+  <!-- DETAILS (expandable) -->
+  <div class="panel" id="detailsPanel" style="display:none">
+    <button class="details-toggle" id="detailsToggle" onclick="toggleDetails()" aria-expanded="false" aria-controls="detailsBody">
+      Что именно это значит?
+      <span class="arrow">↓</span>
+    </button>
+    <div class="details-body" id="detailsBody"></div>
+  </div>
+
+  <!-- REQUIRED APPROVAL -->
+  <div class="publication-rules">
+    <h2>Перед публикацией — обязательное согласование</h2>
+    <p><strong>В любом случае согласуй публикацию с руководителем</strong> — независимо от результата чек-листа. Вопросы интеллектуальной собственности согласуй с <a href="mailto:zis@naumen.ru">отделом интеллектуальной собственности</a>.</p>
+    <p><strong>Если документ, код, статья или другой материал содержит персональные данные или конфиденциальную информацию, публиковать его строго запрещено политикой информационной безопасности Naumen.</strong> Согласование с руководителем или <a href="mailto:zis@naumen.ru">отделом интеллектуальной собственности</a> не отменяет этот запрет.</p>
+  </div>
+
+</div>
+
+<script>
+const checked = new Set();
+
+const approvalDetails = [
+  { icon: '📋', text: '<strong>Согласование руководителя обязательно перед любой публикацией</strong> — даже если ни один пункт не отмечен. Чек-лист не заменяет согласование.' },
+  { icon: '⚖️', text: '<strong>Интеллектуальную собственность согласуем с <a href="mailto:zis@naumen.ru">отделом интеллектуальной собственности</a>.</strong> Если материал содержит объекты ИС или есть сомнения в правах на них, обратись в этот отдел до публикации.' },
+  { icon: '🔒', text: '<strong>Персональные данные и конфиденциальную информацию публиковать строго запрещено политикой информационной безопасности Naumen.</strong> Это правило действует для документов, кода, статей, схем и любых других материалов. Согласование не отменяет запрет.' },
+];
+
+function getVerdict(selection) {
+  const n = selection.size;
+  const hasConfidential = selection.has('confidential');
+  const hasPersonal = selection.has('personal');
+
+  // Любой из этих пунктов запрещает публикацию независимо от остальных отметок.
+  if (hasConfidential || hasPersonal) {
+    const reason = hasConfidential && hasPersonal
+      ? 'персональные данные и конфиденциальную информацию'
+      : hasPersonal ? 'персональные данные' : 'конфиденциальную информацию';
+    return {
+      cls: 'danger', icon: '🛑',
+      title: 'СТОП — публикация строго запрещена',
+      text: 'Материал содержит ' + reason + '. Публиковать такие документы, код, статьи и другие материалы строго запрещено политикой информационной безопасности Naumen. Согласование с руководителем или <a href="mailto:zis@naumen.ru">отделом интеллектуальной собственности</a> не отменяет этот запрет.',
+      details: approvalDetails,
+    };
+  }
+
+  if (selection.has('nopermit')) return {
+    cls: 'danger', icon: '⏸️',
+    title: 'СТОП — сначала получи согласование',
+    text: 'Без согласования руководителя публиковать или передавать материал нельзя. Вопросы интеллектуальной собственности дополнительно согласуй с <a href="mailto:zis@naumen.ru">отделом интеллектуальной собственности</a>. Ещё раз проверь, что материал не содержит персональных данных и конфиденциальной информации.',
+    details: approvalDetails,
+  };
+
+  if (n === 0) return {
+    cls: 'neutral', icon: '🔍',
+    title: 'Нет отметок — согласование всё равно обязательно',
+    text: 'Проверь каждый пункт: отсутствие отметок не подтверждает, что материал можно публиковать. Перед публикацией в любом случае требуется согласование руководителя. Если есть вопросы об интеллектуальной собственности, согласуй их с <a href="mailto:zis@naumen.ru">отделом интеллектуальной собственности</a>.',
+    details: approvalDetails,
+  };
+
+  if (n === 1) return {
+    cls: 'neutral', icon: '🟡',
+    title: 'Есть признак ИС — проверь и согласуй',
+    text: 'Один признак — повод проверить права на материал и пройти остальные пункты. Вопросы интеллектуальной собственности согласуй с <a href="mailto:zis@naumen.ru">отделом интеллектуальной собственности</a>. Перед публикацией в любом случае получи согласование руководителя.',
+    details: approvalDetails,
+  };
+
+  return {
+    cls: 'danger', icon: n <= 3 ? '⚠️' : '🔴',
+    title: n <= 3 ? 'Есть признаки охраняемого объекта ИС' : 'СТОП — сначала согласуй интеллектуальную собственность',
+    text: 'Материал может относиться к охраняемым объектам интеллектуальной собственности. До публикации согласуй вопросы ИС с <a href="mailto:zis@naumen.ru">отделом интеллектуальной собственности</a> и обязательно получи согласование руководителя. Если материал содержит персональные данные или конфиденциальную информацию, его публикация строго запрещена.',
+    details: approvalDetails,
+  };
+}
+
+function toggle(el, id) {
+  if (checked.has(id)) {
+    checked.delete(id);
+    el.classList.remove('checked');
+  } else {
+    checked.add(id);
+    el.classList.add('checked');
+  }
+  update();
+}
+
+function update() {
+  const n = checked.size;
+  const total = document.querySelectorAll('.check-item').length;
+  const prohibited = checked.has('confidential') || checked.has('personal');
+  const needsApproval = checked.has('nopermit');
+  const pct = prohibited ? 100 : n / total * 100;
+
+  const fill = document.getElementById('meterFill');
+  fill.style.width = pct + '%';
+  fill.style.background = prohibited || needsApproval || n >= 2 ? '#D93050' : '#D97706';
+
+  const mc = document.getElementById('meterCount');
+  mc.textContent = n + ' из ' + total + ' пунктов';
+  mc.className = 'meter-count' + (prohibited || needsApproval || n >= 2 ? ' danger' : '');
+
+  const badge = document.getElementById('counterBadge');
+  badge.textContent = n;
+  badge.className = 'counter-badge' + (n > 0 ? ' visible' : '');
+
+  const v = getVerdict(checked);
+  document.getElementById('verdict').className = 'verdict ' + v.cls;
+  document.getElementById('verdictIcon').textContent = v.icon;
+  document.getElementById('verdictTitle').textContent = v.title;
+  document.getElementById('verdictText').innerHTML = v.text;
+  document.getElementById('detailsPanel').style.display = 'block';
+  document.getElementById('detailsBody').innerHTML = v.details.map(d =>
+    '<div class="detail-row"><span class="detail-icon">' + d.icon + '</span><span class="detail-text">' + d.text + '</span></div>'
+  ).join('');
+}
+
+function toggleDetails() {
+  const button = document.getElementById('detailsToggle');
+  const open = button.classList.toggle('open');
+  button.setAttribute('aria-expanded', String(open));
+  document.getElementById('detailsBody').classList.toggle('open', open);
+}
+
+update();
+</script>
+</body>
+</html>
